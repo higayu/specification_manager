@@ -31,23 +31,38 @@ class BulletTestCaseController extends Controller
         return view('bullet_cases.create', compact('project'));
     }
 
-    /** テキスト取り込み */
-    public function store(
-        Request $request,
-        Project $project,
-        BulletTestCaseImportService $svc
-    ): RedirectResponse {
+
+    public function store(Request $request, Project $project, BulletTestCaseImportService $svc)
+    {
+        // app/Http/Controllers/BulletTestCaseController.php の store()
+
         $data = $request->validate([
+            'mode'  => ['required', 'in:single,bulk'],
             'text'  => ['required', 'string'],
-            'title' => ['nullable', 'string', 'max:255'],
+            'title' => ['exclude_if:mode,bulk', 'nullable', 'string', 'max:255'],
         ]);
 
-        $svc->import($project, $data['text'], $data['title'] ?? null);
+        $svc->import(
+            $project,
+            $data['text'],
+            $data['mode'] === 'single' ? ($data['title'] ?? null) : null
+        );
 
-        return redirect()
-            ->route('bullet-cases.index', ['project' => $project])
-            ->with('status', 'インポートしました');
+        $mode = $data['mode'] ?? 'single';
+
+        if ($mode === 'bulk') {
+            [$groups, $rowsTotal] = $svc->importMany($project, $data['text']);
+            return redirect()
+                ->route('bullet-cases.index', $project)
+                ->with('ok', "一括実行：{$groups}グループ／合計{$rowsTotal}行を取り込みました。");
+        } else {
+            $g = $svc->import($project, $data['text']);
+            return redirect()
+                ->route('bullet-cases.index', $project)
+                ->with('ok', "１つずつ：『{$g->title}』を取り込みました（行数：{$g->rows()->count()}）。");
+        }
     }
+
 
     /** 行の完了フラグ切替 */
     public function toggle(BulletTestCaseRow $row): RedirectResponse

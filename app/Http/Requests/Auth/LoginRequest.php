@@ -27,8 +27,9 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
+            // メールではなく login_code のみを必須にする
+            'login_code' => ['required', 'string'],
+            'password'   => ['required', 'string'],
         ];
     }
 
@@ -41,11 +42,17 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $remember = $this->boolean('remember');
+
+        if (! Auth::attempt([
+            'login_code' => $this->input('login_code'),
+            'password'   => $this->input('password'),
+        ], $remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                // エラー表示先も login_code に変更
+                'login_code' => trans('auth.failed'),
             ]);
         }
 
@@ -68,7 +75,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
+            'login_code' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -80,6 +87,19 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        // login_code + IP でレート制限キー
+        $key = (string) $this->input('login_code', '');
+        return Str::transliterate(Str::lower($key)).'|'.$this->ip();
+    }
+
+    /**
+     * Nice-to-have: バリデーションメッセージの属性名
+     */
+    public function attributes(): array
+    {
+        return [
+            'login_code' => 'ログインID',
+            'password'   => 'パスワード',
+        ];
     }
 }

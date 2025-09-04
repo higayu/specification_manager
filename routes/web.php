@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BulletTestCaseController;
+use App\Http\Controllers\DashboardController;
 use App\Models\Project; // ← プロジェクトモデルを使う
 use Illuminate\Support\Facades\Route;
 
@@ -12,9 +13,11 @@ Route::middleware(['auth'])->group(function () {
         return view('projects.select', compact('projects'));
     })->name('projects.select');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware(['verified'])->name('dashboard');
+    // routes/web.php
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->middleware(['verified'])
+        ->name('dashboard');
+
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
