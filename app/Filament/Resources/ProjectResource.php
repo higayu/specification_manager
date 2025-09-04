@@ -3,27 +3,34 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
-use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\Project;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'プロジェクト管理';
+    protected static ?string $pluralModelLabel = 'プロジェクト';
+    protected static ?string $modelLabel = 'プロジェクト';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->label('プロジェクト名')
+                    ->required()
+                    ->maxLength(255),
+
+                Forms\Components\Textarea::make('description')
+                    ->label('説明')
+                    ->rows(3),
             ]);
     }
 
@@ -31,7 +38,11 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('id')->sortable()->label('ID'),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable()->label('プロジェクト名'),
+                Tables\Columns\TextColumn::make('description')->label('説明')->limit(50),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->label('作成日'),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->label('更新日'),
             ])
             ->filters([
                 //
@@ -48,9 +59,7 @@ class ProjectResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

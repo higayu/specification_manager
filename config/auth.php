@@ -4,38 +4,38 @@ return [
     'defaults' => [
         'guard' => 'web', // JWT をデフォルトの認証ガードに設定
         //'passwords' => 'm_staff', // m_staff に変更した部分（コメントアウト）
-        //'provider' => 'users',
-        'passwords' => 'login_users', // 元々の設定（users）に戻す
+        'provider' => 'users',
+        //'passwords' => 'login_users', // 元々の設定（users）に戻す
     ],
 
     'guards' => [
         'web' => [
             'driver' => 'session',
             //'provider' => 'm_staff', // m_staff に変更した部分（コメントアウト）
-            //'provider' => 'users',
-            'provider' => 'login_users', // 元々の設定に戻す
+            'provider' => 'users',
+            //'provider' => 'login_users', // 元々の設定に戻す
         ],
 
         // JWT 認証用のガード
         'api' => [
             'driver' => 'jwt',
             //'provider' => 'm_staff', // m_staff に変更した部分（コメントアウト）
-            //'provider' => 'users',
-            'provider' => 'login_users', // 元々の設定に戻す
+            'provider' => 'users',
+            //'provider' => 'login_users', // 元々の設定に戻す
         ],
 
         // Sanctum 認証用のガード
         'sanctum' => [
             'driver' => 'session',
             //'provider' => 'm_staff', // m_staff に変更した部分（コメントアウト）
-            //'provider' => 'users',
-            'provider' => 'login_users', // 元々の設定に戻す
+            'provider' => 'users',
+            //'provider' => 'login_users', // 元々の設定に戻す
         ],
 
         'filament' => [
             'driver' => 'session',
-            //'provider' => 'users',
-            'provider' => 'login_users',
+            'provider' => 'users',
+            //'provider' => 'login_users',
         ],
     ],
 
@@ -60,8 +60,8 @@ return [
         //'m_staff' => [ // m_staff に変更した部分（コメントアウト）
         'users' => [ // 元々の設定に戻す
             //'provider' => 'm_staff',
-            //'provider' => 'users', // 元々の設定
-            'provider' => 'login_users', // 元々の設定
+            'provider' => 'users', // 元々の設定
+            //'provider' => 'login_users', // 元々の設定
             // Laravel の初期設定では 'password_resets' テーブルを使用する場合が多いですが、
             // 環境に合わせて適宜修正してください
             //'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),

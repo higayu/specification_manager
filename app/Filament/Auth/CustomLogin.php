@@ -12,8 +12,8 @@ use Filament\Support\Contracts\TranslatableContent;
 use Filament\Actions\Action;
 use Filament\Support\Contracts\HasBreadcrumbs;
 use Filament\Widgets\Widget;
-//use App\Models\User;
-use App\Models\LoginUser;
+use App\Models\User;
+// use App\Models\LoginUser;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -58,7 +58,7 @@ class CustomLogin extends BaseLogin
 
         $this->dispatch('loading');
 
-        $user = LoginUser::where('login_code', $data['login_code'])->first();
+        $user = User::where('login_code', $data['login_code'])->first();
 
         if (!$user || !Auth::attempt(['login_code' => $data['login_code'], 'password' => $data['password']])) {
             $this->dispatch('loading-finished');
