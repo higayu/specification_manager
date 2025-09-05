@@ -17,7 +17,7 @@
         @forelse ($groups as $group)
             <div class="bg-white shadow rounded-lg mb-4 mt-4">  {{-- 👈 mb-8 を追加 --}}
                 <div class="px-4 py-3 border-b">
-                    <strong>{{ $group->name }}</strong>
+                    <strong>{{ $group->title }}</strong>
                 </div>
                 <div class="p-0 overflow-x-auto">
                     <table class="min-w-full text-sm">

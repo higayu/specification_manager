@@ -45,6 +45,15 @@
                        class="px-3 py-1.5 border rounded text-sm hover:bg-gray-50">
                         {{ $p->key }}：{{ $p->name }}
                     </a>
+                    <a href="{{ route('specifications.index', ['project' => $p]) }}"
+                        class="px-3 py-1.5 border rounded text-sm hover:bg-gray-50 text-indigo-600">
+                        {{ $p->key }}：仕様一覧
+                    </a>
+                    {{-- 仕様追加へのリンク --}}
+                    <a href="{{ route('specifications.create', ['project' => $p->id]) }}"
+                    class="px-3 py-1.5 border rounded bg-indigo-600 text-black text-sm hover:bg-indigo-700">
+                        {{ $p->key }}：仕様追加
+                    </a>
                 @endforeach
                 @if(empty($projects) || count($projects ?? []) === 0)
                     <span class="text-gray-500 text-sm">プロジェクトがありません。</span>

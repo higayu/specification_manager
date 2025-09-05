@@ -17,15 +17,21 @@ class Project extends Model
         return $this->hasMany(Requirement::class);
     }
 
-    // これで /projects/XXXX の XXXX を id で解決する
-    public function getRouteKeyName(): string
+    // 仕様リレーション ← ★ 追加
+    public function specifications()
     {
-        return 'id';
+        return $this->hasMany(Specification::class);
     }
 
     // テストケースリレーション
     public function testCases()
     {
         return $this->hasMany(TestCase::class);
+    }
+
+    // /projects/XXXX の XXXX を id で解決する
+    public function getRouteKeyName(): string
+    {
+        return 'id';
     }
 }

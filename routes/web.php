@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BulletTestCaseController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SpecificationController;
 use App\Models\Project; // ← プロジェクトモデルを使う
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,9 @@ Route::middleware(['auth'])->group(function () {
         ->middleware(['verified'])
         ->name('dashboard');
 
+    Route::resource('specifications', SpecificationController::class)->middleware(['auth']);
+    Route::post('spec-change-requests/{cr}/approve', [SpecificationController::class,'approve'])
+    ->name('spec-change-requests.approve')->middleware(['auth']);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
