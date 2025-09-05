@@ -72,4 +72,17 @@ class BulletTestCaseController extends Controller
 
         return back()->with('status', '状態を切り替えました');
     }
+
+    public function update(Request $request, BulletTestCaseRow $row)
+    {
+        $data = $request->validate([
+            'memo' => 'nullable|string|max:255',
+            'priority' => 'required|integer|min:1|max:3',
+        ]);
+
+        $row->update($data);
+
+        return back()->with('status', '更新しました');
+    }
+
 }

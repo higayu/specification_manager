@@ -34,6 +34,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('bullet-cases', [BulletTestCaseController::class,'store'])->name('bullet-cases.store');
     });
 
+    Route::patch('bullet-case-rows/{row}', [BulletTestCaseController::class,'update'])
+        ->name('bullet-cases.rows.update');
     // 行の完了フラグ切替
     Route::post('bullet-case-rows/{row}/toggle', [BulletTestCaseController::class,'toggle'])->name('bullet-cases.rows.toggle');
 });
