@@ -34,7 +34,7 @@
                     </label>
                 </div>
                 <div class="flex gap-2">
-                    <button type="submit" class="px-3 py-1.5 border rounded bg-gray-900 text-black text-sm">
+                    <button type="submit" class="px-3 py-1.5 border rounded bg-white text-black text-sm">
                         絞り込み
                     </button>
                     <a href="{{ route('bullet-cases.index', ['project' => $project]) }}"
@@ -142,7 +142,7 @@
                                 {{-- 操作 --}}
                                 <td class="px-3 py-2 space-x-1">
                                     <button type="submit" form="{{ $formId }}"
-                                            class="px-2 py-1 border rounded text-sm bg-indigo-600 text-blue-800">
+                                            class="px-2 py-1 border rounded text-sm bg-white text-blue-800">
                                         保存
                                     </button>
                                 </td>

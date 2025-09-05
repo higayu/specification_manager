@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+
 
 class SpecificationController extends Controller
 {
@@ -36,66 +38,74 @@ class SpecificationController extends Controller
 
 
 
-    public function store(Request $req): \Illuminate\Http\RedirectResponse
+    public function store(Request $req): RedirectResponse
     {
         $data = $req->validate([
-            'project_id' => ['required','exists:projects,id'],
-            'code'       => ['required','string','max:255'],
-            'title'      => ['required','string','max:255'],
-            'body_md'    => ['required','string'],
-            'attributes' => ['nullable','array'],
-            // 画像バリデーション（5MB/枚・形式制限は適宜調整）
-            'images'     => ['nullable','array'],
-            'images.*'   => ['file','image','mimes:jpg,jpeg,png,gif,webp','max:5120'],
-            'append_images' => ['nullable'], // チェックボックス
+            'project_id'    => ['required','exists:projects,id'],
+            'code'          => ['required','string','max:255'],
+            'title'         => ['required','string','max:255'],
+            'body_md'       => ['required','string'],
+            'attributes'    => ['nullable','array'],
+            'images'        => ['nullable','array'],
+            'images.*'      => ['file','image','mimes:jpg,jpeg,png,gif,webp','max:5120'],
+            'append_images' => ['nullable'],
         ]);
 
+        DB::beginTransaction();
+        $storedPaths = [];
 
-        // 画像を保存し、Markdown を組み立て
-        $appendMd = '';
-        if ($req->hasFile('images')) {
-            $lines = [];
-            foreach ($req->file('images') as $file) {
-                if (!$file->isValid()) continue;
-
-                // ✅ ディスクは 'public' を指定。パスには 'public/' を付けない
-                $subdir = 'spec-images/' . date('Y/m');
-                $path   = $file->store($subdir, 'public');   // storage/app/public/spec-images/...
-                $url    = Storage::url($path);               // /storage/spec-images/...
-
-                $alt    = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                $lines[] = "![{$alt}]({$url})";
+        try {
+            $appendMd = '';
+            if ($req->hasFile('images')) {
+                $lines = [];
+                foreach ($req->file('images') as $file) {
+                    if (!$file->isValid()) continue;
+                    $path = $file->store('spec-images/' . date('Y/m'), 'public');
+                    if ($path) {
+                        $storedPaths[] = $path;
+                        $url  = Storage::url($path);
+                        $alt  = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                        $lines[] = "![{$alt}]({$url})";
+                    }
+                }
+                if (!empty($lines) && $req->boolean('append_images')) {
+                    $appendMd = "\n\n" . implode("\n\n", $lines) . "\n";
+                }
             }
-            if (!empty($lines) && $req->boolean('append_images')) {
-                $appendMd = "\n\n" . implode("\n\n", $lines) . "\n";
+
+            // 仕様ヘッダ
+            $spec = Specification::create([
+                'project_id' => $data['project_id'],
+                'code'       => $data['code'],
+                'title'      => $data['title'],
+                'status'     => 'approved', // 運用ポリシーに合わせて変更可
+            ]);
+
+            // v1
+            $v1 = $spec->versions()->create([
+                'version_no' => 1,
+                'body_md'    => ($data['body_md'] ?? '') . $appendMd,
+                'attributes' => $data['attributes'] ?? [],
+                'created_by' => auth()->id(),
+            ]);
+
+            $spec->update(['current_version_id' => $v1->id]);
+
+            DB::commit();
+
+            return redirect()->route('specifications.show', [
+                'specification' => $spec->id,
+                'project'       => $data['project_id'],
+            ]);
+        } catch (\Throwable $e) {
+            foreach ($storedPaths as $p) {
+                Storage::disk('public')->delete($p);
             }
+            DB::rollBack();
+            throw $e;
         }
-
-
-        // 仕様ヘッダ
-        $spec = Specification::create([
-            'project_id' => $data['project_id'],
-            'code'       => $data['code'],
-            'title'      => $data['title'],
-            'status'     => 'approved',
-        ]);
-
-        // v1 作成（本文末尾に画像の Markdown を追加）
-        $v1 = SpecificationVersion::create([
-            'specification_id' => $spec->id,
-            'version_no'       => 1,
-            'body_md'          => ($data['body_md'] ?? '') . $appendMd,
-            'attributes'       => $data['attributes'] ?? [],
-            'created_by'       => auth()->id(),
-        ]);
-
-        $spec->update(['current_version_id' => $v1->id]);
-
-        return redirect()->route('specifications.show', [
-            'specification' => $spec->id,
-            'project'       => $data['project_id'],
-        ]);
     }
+
 
 
     /** 詳細表示（?project=ID があればそれを優先） */
@@ -130,9 +140,12 @@ class SpecificationController extends Controller
 
 
     /** 変更申請を伴う更新（新バージョン作成＋CR作成） */
-    public function update(Request $req, Specification $spec): RedirectResponse
+    public function update(Request $req, Specification $specification): RedirectResponse
     {
-        // 1) バリデーション（画像もここで定義）
+        if (!$specification->exists || !$specification->getKey()) {
+            abort(404, 'Specification not found');
+        }
+
         $data = $req->validate([
             'title'         => ['required','string','max:255'],
             'body_md'       => ['required','string'],
@@ -144,56 +157,73 @@ class SpecificationController extends Controller
             'append_images' => ['nullable'],
         ]);
 
-        // 2) 画像を保存 → Markdown を末尾に追記するテキストを作る
-        $appendMd = '';
-        if ($req->hasFile('images')) {
-            $lines = [];
-            foreach ($req->file('images') as $file) {
-                if (!$file->isValid()) continue;
-                $path = $file->store('spec-images/' . date('Y/m'), 'public'); // storage/app/public/...
-                $url  = Storage::url($path);                                   // /storage/...
-                $alt  = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                $lines[] = "![{$alt}]({$url})";
+        DB::beginTransaction();
+        $storedPaths = []; // 失敗時に掃除するため
+
+        try {
+            // 1) 画像 → Markdown 追記文字列を構築
+            $appendMd = '';
+            if ($req->hasFile('images')) {
+                $lines = [];
+                foreach ($req->file('images') as $file) {
+                    if (!$file->isValid()) continue;
+                    $path = $file->store('spec-images/' . date('Y/m'), 'public');
+                    if ($path) {
+                        $storedPaths[] = $path;
+                        $url  = Storage::url($path);
+                        $alt  = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                        $lines[] = "![{$alt}]({$url})";
+                    }
+                }
+                if (!empty($lines) && $req->boolean('append_images')) {
+                    $appendMd = "\n\n" . implode("\n\n", $lines) . "\n";
+                }
             }
-            if (!empty($lines) && $req->boolean('append_images')) {
-                $appendMd = "\n\n" . implode("\n\n", $lines) . "\n";
+
+            // 2) 次の版番号を一度だけ決定
+            $nextNo = (int) ($specification->versions()->max('version_no') ?? 0) + 1;
+
+            // 3) 新バージョン作成（★ リレーション経由、ここで1回だけ）
+            $next = $specification->versions()->create([
+                'version_no' => $nextNo,
+                'body_md'    => ($data['body_md'] ?? '') . $appendMd,
+                'attributes' => $data['attributes'] ?? [],
+                'created_by' => auth()->id(),
+            ]);
+
+            // 4) 変更要求（CR）作成
+            $curr = $specification->currentVersion; // null でもOK
+            $cr = SpecChangeRequest::create([
+                'project_id'       => $specification->project_id,
+                'specification_id' => $specification->id,
+                'from_version_id'  => optional($curr)->id,
+                'to_version_id'    => $next->id,
+                'reason'           => $data['reason'],
+                'impact'           => $data['impact'] ?? null,
+                'status'           => 'proposed',
+                'requested_by'     => auth()->id(),
+            ]);
+
+            // 5) タイトル反映（必要に応じて）
+            $specification->update(['title' => $data['title']]);
+
+            DB::commit();
+
+            return redirect()->route('spec-change-requests.show', [
+                'cr'      => $cr->id,
+                'project' => $specification->project_id,
+            ]);
+        } catch (\Throwable $e) {
+            // 失敗時にアップロード済ファイルを削除
+            foreach ($storedPaths as $p) {
+                Storage::disk('public')->delete($p);
             }
+            DB::rollBack();
+            throw $e;
         }
-
-        // 3) 現在版と次版番号
-        $curr   = $spec->currentVersion; // null の可能性あり
-        $nextNo = (int) ($spec->versions()->max('version_no') ?? 0) + 1;
-
-        // 4) 新バージョンを作成（本文＋画像追記）
-        $next = SpecificationVersion::create([
-            'specification_id' => $spec->id,
-            'version_no'       => $nextNo,
-            'body_md'          => ($data['body_md'] ?? '') . $appendMd,
-            'attributes'       => $data['attributes'] ?? [],
-            'created_by'       => auth()->id(),
-        ]);
-
-        // 5) 変更要求（CR）を作成（承認後に current_version_id を切替）
-        $cr = SpecChangeRequest::create([
-            'project_id'       => $spec->project_id,
-            'specification_id' => $spec->id,
-            'from_version_id'  => optional($curr)->id,
-            'to_version_id'    => $next->id,
-            'reason'           => $data['reason'],
-            'impact'           => $data['impact'] ?? null,
-            'status'           => 'proposed',
-            'requested_by'     => auth()->id(),
-        ]);
-
-        // タイトルも仕様ヘッダに反映（必要なら）
-        $spec->update(['title' => $data['title']]);
-
-        // 6) CR 詳細へ
-        return redirect()->route('spec-change-requests.show', [
-            'cr'      => $cr->id,
-            'project' => $spec->project_id,
-        ]);
     }
+
+
 
 
     /** CR 承認（現行版を切替） */

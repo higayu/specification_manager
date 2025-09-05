@@ -1,15 +1,12 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SpecificationVersion extends Model
 {
-    // テーブル名が "specification_versions" なら指定不要
-    // もしスキーマが "spec_versions" なら ↓ を有効化:
-    // protected $table = 'spec_versions';
+    use HasFactory;
 
     protected $fillable = [
         'specification_id',
@@ -20,17 +17,19 @@ class SpecificationVersion extends Model
     ];
 
     protected $casts = [
-        'attributes' => 'array',
+        'specification_id' => 'integer',
+        'version_no'       => 'integer',
+        'attributes'       => 'array',   // JSONを配列で扱う
+        'created_by'       => 'integer',
     ];
 
-    public function specification(): BelongsTo
+    public function specification()
     {
-        return $this->belongsTo(Specification::class);
+        return $this->belongsTo(Specification::class, 'specification_id', 'id');
     }
 
-    public function createdBy(): BelongsTo
+    public function author()
     {
-        // users.id への外部キーが created_by の前提
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by', 'id');
     }
 }
