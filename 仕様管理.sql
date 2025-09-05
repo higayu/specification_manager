@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `bullet_test_case_rows` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `memo` varchar(255) DEFAULT NULL,
-  `priority` tinyint(4) NOT NULL DEFAULT 3,
+  `priority` tinyint(4) NOT NULL DEFAULT 2,
   PRIMARY KEY (`id`),
   KEY `bullet_test_case_rows_group_id_foreign` (`group_id`),
   CONSTRAINT `bullet_test_case_rows_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `bullet_test_case_groups` (`id`) ON DELETE CASCADE
@@ -68,27 +68,27 @@ CREATE TABLE IF NOT EXISTS `bullet_test_case_rows` (
 
 -- テーブル specification_manager.bullet_test_case_rows: ~36 rows (約) のデータをダンプしています
 INSERT INTO `bullet_test_case_rows` (`id`, `group_id`, `order_no`, `no`, `feature`, `input_condition`, `expected`, `is_done`, `created_at`, `updated_at`, `memo`, `priority`) VALUES
-	(1, 1, 1, 'TC1-1', '初期表示', '土壌改良資材マスター存在', 'フラグ=1のデータが昇順で表示される', 1, '2025-09-04 07:02:03', '2025-09-04 07:06:23', NULL, 3),
-	(2, 1, 2, 'TC1-2', '初期表示', '作物マスター存在', '作物名がプルダウンに設定される', 1, '2025-09-04 07:02:03', '2025-09-04 16:09:52', NULL, 3),
-	(3, 1, 3, 'TC1-3', '初期表示', 'ボカシマスター存在', '分析値・効率が設定される', 1, '2025-09-04 07:02:03', '2025-09-04 16:10:03', NULL, 3),
-	(4, 1, 4, 'TC1-4', '初期表示', 'DB.土壌分析値あり', 'CEC～ホウ素が表示される', 1, '2025-09-04 07:02:03', '2025-09-04 16:10:07', NULL, 3),
-	(5, 1, 5, 'TC1-5', '初期表示', 'DB.土壌分析値なし', '空白＋警告「土壌分析値を登録してください」が表示される', 1, '2025-09-04 07:02:03', '2025-09-04 16:10:09', NULL, 3),
-	(6, 2, 1, 'TC2-1', '必須入力チェック', '作物名未選択', 'エラー表示', 1, '2025-09-04 07:03:08', '2025-09-04 16:34:02', NULL, 3),
-	(7, 2, 2, 'TC2-2', '必須入力チェック', '面積未入力', 'エラー表示', 1, '2025-09-04 07:03:08', '2025-09-04 16:34:06', NULL, 3),
-	(8, 2, 3, 'TC2-3', '必須入力チェック', 'ボカシ施肥量入力あり＋配合比率未入力', 'エラー表示', 1, '2025-09-04 07:03:08', '2025-09-04 16:34:19', NULL, 3),
-	(9, 2, 4, 'TC2-4', '必須入力チェック', 'ボカシ施肥量・明細部元肥施肥量いずれも未入力', 'エラー表示', 1, '2025-09-04 07:03:08', '2025-09-04 16:34:21', NULL, 3),
-	(10, 2, 5, 'TC2-5', 'ボカシ計算', '施肥量・配合比率入力あり', '魚粉・油粕・米ぬかの元肥施肥量が算出される', 1, '2025-09-04 07:03:08', '2025-09-04 16:34:25', NULL, 3),
-	(11, 2, 6, 'TC2-6', 'ボカシ計算', 'ボカシ分析値=0', 'ボカシ成分は空白', 1, '2025-09-04 07:03:08', '2025-09-04 16:34:42', NULL, 3),
-	(12, 2, 7, 'TC2-7', 'ボカシ計算', 'ボカシ施肥量入力あり', '圃場施肥量(元肥)が算出される', 1, '2025-09-04 07:03:08', '2025-09-04 16:34:52', NULL, 3),
-	(13, 2, 8, 'TC2-8', '明細計算', '元肥施肥量入力あり', '成分/窒素～ホウ素が算出される', 0, '2025-09-04 07:03:08', '2025-09-04 07:03:08', NULL, 3),
-	(14, 2, 9, 'TC2-9', '明細計算', '分析値=0', '成分は空白', 0, '2025-09-04 07:03:08', '2025-09-04 07:03:08', NULL, 3),
-	(15, 2, 10, 'TC2-10', '明細計算', '元肥施肥量入力あり', '圃場施肥量(元肥)が算出される', 0, '2025-09-04 07:03:08', '2025-09-04 07:03:08', NULL, 3),
-	(16, 2, 11, 'TC2-11', '成分計算', '入力値あり', '肥料成分量が正しく算出される', 0, '2025-09-04 07:03:08', '2025-09-04 07:03:08', NULL, 3),
-	(17, 2, 12, 'TC2-12', '成分計算', '窒素計算', '参考成分値=肥料成分量+0.1×(硝酸)²', 0, '2025-09-04 07:03:08', '2025-09-04 07:03:08', NULL, 3),
-	(18, 2, 13, 'TC2-13', '成分計算', 'リン酸～ホウ素', '参考成分値=肥料成分量+土壌分析値', 0, '2025-09-04 07:03:08', '2025-09-04 07:03:08', NULL, 3),
-	(19, 2, 14, 'TC2-14', '成分計算', '上限超過', '赤色表示', 0, '2025-09-04 07:03:08', '2025-09-04 07:03:08', NULL, 3),
-	(20, 2, 15, 'TC2-15', '成分計算', '下限未満', '青色表示', 0, '2025-09-04 07:03:08', '2025-09-04 07:03:08', NULL, 3),
-	(21, 2, 16, 'TC2-16', '保存処理', '再計算後', 'DBにCEC～ホウ素・マンガン～ホウ素が保存される', 0, '2025-09-04 07:03:08', '2025-09-04 07:03:08', NULL, 3),
+	(1, 1, 1, 'TC1-1', '初期表示', '土壌改良資材マスター存在', 'フラグ=1のデータが昇順で表示される', 1, '2025-09-04 07:02:03', '2025-09-04 22:17:04', 'フラグの値は小さいほうが優先？', 2),
+	(2, 1, 2, 'TC1-2', '初期表示', '作物マスター存在', '作物名がプルダウンに設定される', 1, '2025-09-04 07:02:03', '2025-09-04 22:17:23', NULL, 2),
+	(3, 1, 3, 'TC1-3', '初期表示', 'ボカシマスター存在', '分析値・効率が設定される', 1, '2025-09-04 07:02:03', '2025-09-04 22:17:21', NULL, 2),
+	(4, 1, 4, 'TC1-4', '初期表示', 'DB.土壌分析値あり', 'CEC～ホウ素が表示される', 1, '2025-09-04 07:02:03', '2025-09-04 22:17:19', NULL, 2),
+	(5, 1, 5, 'TC1-5', '初期表示', 'DB.土壌分析値なし', '空白＋警告「土壌分析値を登録してください」が表示される', 1, '2025-09-04 07:02:03', '2025-09-04 22:17:12', NULL, 2),
+	(6, 2, 1, 'TC2-1', '必須入力チェック', '作物名未選択', 'エラー表示', 1, '2025-09-04 07:03:08', '2025-09-04 22:17:27', NULL, 2),
+	(7, 2, 2, 'TC2-2', '必須入力チェック', '面積未入力', 'エラー表示', 1, '2025-09-04 07:03:08', '2025-09-04 22:17:31', NULL, 2),
+	(8, 2, 3, 'TC2-3', '必須入力チェック', 'ボカシ施肥量入力あり＋配合比率未入力', 'エラー表示', 1, '2025-09-04 07:03:08', '2025-09-04 22:17:33', NULL, 2),
+	(9, 2, 4, 'TC2-4', '必須入力チェック', 'ボカシ施肥量・明細部元肥施肥量いずれも未入力', 'エラー表示', 1, '2025-09-04 07:03:08', '2025-09-04 22:17:36', NULL, 2),
+	(10, 2, 5, 'TC2-5', 'ボカシ計算', '施肥量・配合比率入力あり', '魚粉・油粕・米ぬかの元肥施肥量が算出される', 1, '2025-09-04 07:03:08', '2025-09-04 22:17:38', NULL, 2),
+	(11, 2, 6, 'TC2-6', 'ボカシ計算', 'ボカシ分析値=0', 'ボカシ成分は空白', 1, '2025-09-04 07:03:08', '2025-09-04 22:17:41', NULL, 2),
+	(12, 2, 7, 'TC2-7', 'ボカシ計算', 'ボカシ施肥量入力あり', '圃場施肥量(元肥)が算出される', 1, '2025-09-04 07:03:08', '2025-09-04 22:17:45', NULL, 2),
+	(13, 2, 8, 'TC2-8', '明細計算', '元肥施肥量入力あり', '成分/窒素～ホウ素が算出される', 0, '2025-09-04 07:03:08', '2025-09-04 22:17:47', NULL, 2),
+	(14, 2, 9, 'TC2-9', '明細計算', '分析値=0', '成分は空白', 0, '2025-09-04 07:03:08', '2025-09-04 22:17:51', NULL, 2),
+	(15, 2, 10, 'TC2-10', '明細計算', '元肥施肥量入力あり', '圃場施肥量(元肥)が算出される', 0, '2025-09-04 07:03:08', '2025-09-04 22:17:54', NULL, 2),
+	(16, 2, 11, 'TC2-11', '成分計算', '入力値あり', '肥料成分量が正しく算出される', 0, '2025-09-04 07:03:08', '2025-09-04 22:17:58', NULL, 2),
+	(17, 2, 12, 'TC2-12', '成分計算', '窒素計算', '参考成分値=肥料成分量+0.1×(硝酸)²', 0, '2025-09-04 07:03:08', '2025-09-04 22:18:01', NULL, 2),
+	(18, 2, 13, 'TC2-13', '成分計算', 'リン酸～ホウ素', '参考成分値=肥料成分量+土壌分析値', 0, '2025-09-04 07:03:08', '2025-09-04 22:18:04', NULL, 2),
+	(19, 2, 14, 'TC2-14', '成分計算', '上限超過', '赤色表示', 0, '2025-09-04 07:03:08', '2025-09-04 22:18:07', NULL, 2),
+	(20, 2, 15, 'TC2-15', '成分計算', '下限未満', '青色表示', 0, '2025-09-04 07:03:08', '2025-09-04 22:18:09', NULL, 2),
+	(21, 2, 16, 'TC2-16', '保存処理', '再計算後', 'DBにCEC～ホウ素・マンガン～ホウ素が保存される', 0, '2025-09-04 07:03:08', '2025-09-04 22:18:12', NULL, 2),
 	(22, 3, 1, 'TC3-1', '改良資材押下', '-', '管理画面が開く', 1, '2025-09-04 07:03:51', '2025-09-04 17:01:47', NULL, 3),
 	(23, 3, 2, 'TC3-2', '改良資材押下', '-', 'フラグ=1の全件が昇順表示', 0, '2025-09-04 07:03:51', '2025-09-04 07:03:51', NULL, 3),
 	(24, 3, 3, 'TC3-3', '改良資材押下', '-', '各元肥施肥量が空白にリセットされる', 0, '2025-09-04 07:03:51', '2025-09-04 07:03:51', NULL, 3),
@@ -300,7 +300,8 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 
 -- テーブル specification_manager.sessions: ~1 rows (約) のデータをダンプしています
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-	('aH8ZJ1Ia8FkAuYw9JduoFpZVVt2NFXrS3RDst6XT', 2, '192.168.1.40', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiRVNDS3FuSEsxc0VHR2NCeEZlVkpNa2U4bDFBWW5MY05sbTJEM2hXSyI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjQ5OiJodHRwOi8vMTkyLjE2OC4xLjIyOTo4MDAxL3Byb2plY3RzLzIvYnVsbGV0LWNhc2VzIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1757041468);
+	('qWsEHpLYnUoZRRVVQmaEZ5BqGJXv8ekV2pXd6HGo', 2, '192.168.1.40', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiYzU3UndlVm16b3dDOHdoOHBORlUzQ1Q5emd2eTQ0OEpDMXN1Tzc0YyI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjU3OiJodHRwOi8vMTkyLjE2OC4xLjIyOTo4MDAxL3NwZWNpZmljYXRpb25zLzIvZWRpdD9wcm9qZWN0PTIiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1757062236),
+	('SI2WwRjNkK2ebX7tmtfHuvUdzG07wPEK4JHUoHv9', 2, '192.168.1.136', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiVjlvNnl3MHdCUUQ5dHZyS0dQRjBqaHZsbmxpMzM3ZHNsM0VTc3JkeCI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjQ5OiJodHRwOi8vMTkyLjE2OC4xLjIyOTo4MDAxL3Byb2plY3RzLzIvYnVsbGV0LWNhc2VzIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1757057505);
 
 --  テーブル specification_manager.specifications の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `specifications` (
@@ -317,9 +318,12 @@ CREATE TABLE IF NOT EXISTS `specifications` (
   KEY `specifications_current_version_id_foreign` (`current_version_id`),
   CONSTRAINT `specifications_current_version_id_foreign` FOREIGN KEY (`current_version_id`) REFERENCES `specification_versions` (`id`) ON DELETE SET NULL,
   CONSTRAINT `specifications_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.specifications: ~0 rows (約) のデータをダンプしています
+-- テーブル specification_manager.specifications: ~1 rows (約) のデータをダンプしています
+INSERT INTO `specifications` (`id`, `project_id`, `code`, `title`, `status`, `current_version_id`, `created_at`, `updated_at`) VALUES
+	(1, 2, 'MainForm.SummarizeTable.cs', '土壌分析値について', 'approved', 1, '2025-09-04 22:41:43', '2025-09-04 22:41:43'),
+	(2, 2, 'order_numとactive_flg', '表示フラグと表示順の値', 'approved', 2, '2025-09-04 23:28:03', '2025-09-04 23:28:03');
 
 --  テーブル specification_manager.specification_versions の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `specification_versions` (
@@ -336,9 +340,12 @@ CREATE TABLE IF NOT EXISTS `specification_versions` (
   KEY `specification_versions_created_by_foreign` (`created_by`),
   CONSTRAINT `specification_versions_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `specification_versions_specification_id_foreign` FOREIGN KEY (`specification_id`) REFERENCES `specifications` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.specification_versions: ~0 rows (約) のデータをダンプしています
+-- テーブル specification_manager.specification_versions: ~1 rows (約) のデータをダンプしています
+INSERT INTO `specification_versions` (`id`, `specification_id`, `version_no`, `body_md`, `attributes`, `created_by`, `created_at`, `updated_at`) VALUES
+	(1, 1, 1, '# 土壌分析値（青いセルの値）の保存タイミング\r\n- 再計算の実行\r\n- MainFormを閉じるタイミング\r\n\r\n## 保存前に確認ダイアログ\r\n- DBに保存前に毎回確認する', '[]', 2, '2025-09-04 22:41:43', '2025-09-04 22:41:43'),
+	(2, 2, 1, '似ている単語だから注意\n\n![rain](/storage/spec-images/2025/09/R9EMtj5dweoKVu5nQen3YTOAaepEPcrOnGYmPXNo.png)\n', '[]', 2, '2025-09-04 23:28:03', '2025-09-04 23:28:03');
 
 --  テーブル specification_manager.spec_change_requests の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `spec_change_requests` (
