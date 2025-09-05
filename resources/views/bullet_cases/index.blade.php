@@ -7,7 +7,41 @@
     </x-slot>
 
     <div class="max-w-9xl mx-auto py-6 px-4 sm:px-3 lg:px-8 space-y-4">
-        <div class="flex justify-end">
+        <div class="flex justify-between items-center">
+            {{-- フィルタフォーム（GET） --}}
+            <form method="GET" action="{{ route('bullet-cases.index', ['project' => $project]) }}"
+                  class="flex flex-wrap items-end gap-2">
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">キーワード</label>
+                    <input type="text" name="q" value="{{ $filters['q'] ?? '' }}"
+                           placeholder="No/機能/条件/期待/メモ"
+                           class="border rounded px-2 py-1 text-sm w-64">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">優先度</label>
+                    <select name="priority" class="border rounded px-2 py-1 text-sm">
+                        <option value="">すべて</option>
+                        <option value="1" @selected(($filters['priority'] ?? '')==='1')>高</option>
+                        <option value="2" @selected(($filters['priority'] ?? '')==='2')>中</option>
+                        <option value="3" @selected(($filters['priority'] ?? '')==='3')>低</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="inline-flex items-center text-sm">
+                        <input type="checkbox" name="hide_done" value="1" class="mr-1"
+                               @checked(($filters['hide_done'] ?? false))>
+                        完了を非表示
+                    </label>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="px-3 py-1.5 border rounded bg-gray-900 text-black text-sm">
+                        絞り込み
+                    </button>
+                    <a href="{{ route('bullet-cases.index', ['project' => $project]) }}"
+                       class="px-3 py-1.5 border rounded text-sm">リセット</a>
+                </div>
+            </form>
+
             <a class="inline-flex items-center px-3 py-1.5 border rounded-md text-sm"
                href="{{ route('bullet-cases.create', ['project' => $project]) }}">
                 テキスト取り込み
@@ -38,27 +72,28 @@
                         @forelse ($group->rows as $row)
                             @php $formId = "row-form-{$row->id}"; @endphp
 
-                            {{-- 行専用のフォーム（テーブル外にあってもOK） --}}
+                            {{-- 行専用のフォーム --}}
                             <form id="{{ $formId }}" method="POST" action="{{ route('bullet-cases.rows.update', $row->id) }}">
                                 @csrf
                                 @method('PATCH')
                                 <input type="hidden" name="project_id" value="{{ $project->id }}">
                             </form>
 
-                            <tr>
+                            {{-- 完了行は目立たない配色 --}}
+                            <tr class="{{ $row->is_done ? 'bg-gray-100 text-gray-500' : '' }}">
                                 <td class="px-3 py-2">{{ $row->order_no }}</td>
                                 <td class="px-3 py-2">{{ $row->no }}</td>
                                 <td class="px-3 py-2">{{ $row->feature }}</td>
                                 <td class="px-3 py-2">{{ $row->input_condition }}</td>
                                 <td class="px-3 py-2 whitespace-pre-wrap">{{ $row->expected }}</td>
 
-                                {{-- メモ（この行のフォームに紐づけ） --}}
+                                {{-- メモ --}}
                                 <td class="px-3 py-2">
                                     <input form="{{ $formId }}" type="text" name="memo" value="{{ $row->memo }}"
                                            class="w-48 border rounded px-2 py-1 text-sm" />
                                 </td>
 
-                                {{-- 優先度（バッジ表示＋ボタン風ラジオ） --}}
+                                {{-- 優先度（バッジ + 編集） --}}
                                 <td class="px-3 py-2">
                                     @php
                                         $p = (int)$row->priority;
@@ -75,12 +110,12 @@
                                         {{ $label }}
                                     </span>
 
-                                    {{-- 編集用（✓は出ないボタン風） --}}
+                                    {{-- 編集用（ボタン風ラジオ） --}}
                                     <div class="inline-flex rounded-md overflow-hidden border align-middle">
                                         @foreach ([1=>'高', 2=>'中', 3=>'低'] as $val => $text)
                                             <label class="px-3 py-1 text-sm cursor-pointer select-none
-                                                          {{ $row->priority==$val ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50' }}
-                                                          {{ $val!==1 ? 'border-l' : '' }}">
+                                                         {{ $row->priority==$val ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50' }}
+                                                         {{ $val!==1 ? 'border-l' : '' }}">
                                                 <input form="{{ $formId }}" type="radio" name="priority" value="{{ $val }}" class="hidden"
                                                        @checked($row->priority==$val)>
                                                 {{ $text }}
@@ -89,7 +124,7 @@
                                     </div>
                                 </td>
 
-                                {{-- 状態表示 --}}
+                                {{-- 状態表示＆切替 --}}
                                 <td class="px-3 py-2">
                                     @if($row->is_done)
                                         <span class="inline-flex items-center px-2 py-0.5 rounded bg-green-100 text-green-800">完了</span>
@@ -97,7 +132,6 @@
                                         <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-200 text-gray-800">未了</span>
                                     @endif
 
-                                    {{-- 完了切替 --}}
                                     <form method="POST" action="{{ route('bullet-cases.rows.toggle', ['row' => $row->id]) }}" class="inline">
                                         @csrf
                                         <input type="hidden" name="project_id" value="{{ $project->id }}">
@@ -107,9 +141,8 @@
 
                                 {{-- 操作 --}}
                                 <td class="px-3 py-2 space-x-1">
-                                    {{-- 保存（この行のフォームを送信） --}}
                                     <button type="submit" form="{{ $formId }}"
-                                            class="px-2 py-1 border rounded text-sm bg-indigo-600 text-blue">
+                                            class="px-2 py-1 border rounded text-sm bg-indigo-600 text-blue-800">
                                         保存
                                     </button>
                                 </td>
