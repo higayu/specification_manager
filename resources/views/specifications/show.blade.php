@@ -15,6 +15,17 @@
         </h2>
     </x-slot>
 
+    <div class="flex justify-between">
+        <a href="{{ route('specifications.index', ['project' => $project->id]) }}"
+        class="text-indigo-600 hover:underline">← 一覧へ戻る</a>
+
+        <a href="{{ route('specifications.edit', ['project' => $project->id, 'specification' => $specification->id]) }}"
+        class="inline-block px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+            編集する
+        </a>
+    </div>
+
+
     <div class="max-w-5xl mx-auto py-6 px-4 space-y-6">
         {{-- メタ --}}
         <div class="bg-white shadow rounded p-4 text-sm">
