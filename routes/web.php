@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BulletTestCaseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SpecificationController;
+use App\Http\Controllers\SpecImageController;   // ← これを追加！
 use App\Models\Project; // ← プロジェクトモデルを使う
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,10 @@ Route::middleware(['auth'])->group(function () {
         $projects = Project::orderBy('key')->get();
         return view('projects.select', compact('projects'));
     })->name('projects.select');
+
+    Route::post('/spec-images/upload', [SpecImageController::class, 'store'])->name('spec-images.upload');
+    Route::get('/spec-images', [SpecImageController::class, 'index'])->name('spec-images.index');
+
 
     // routes/web.php
     Route::get('/dashboard', [DashboardController::class, 'index'])

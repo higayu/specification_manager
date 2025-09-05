@@ -62,6 +62,30 @@
             </div>
         </div>
 
+        {{-- 画像アップロード（追加） --}}
+        <div class="bg-white shadow rounded-lg p-4">
+            <h3 class="font-semibold mb-3">画像アップロード</h3>
+
+            <form action="{{ route('spec-images.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
+                @csrf
+                <input type="file" name="image" accept="image/*"
+                       class="block w-full text-sm file:mr-3 file:py-1.5 file:px-3 file:rounded file:border file:bg-gray-50 file:hover:bg-gray-100" required>
+                @error('image')
+                    <div class="text-red-600 text-sm">{{ $message }}</div>
+                @enderror
+
+                <div class="flex items-center gap-2">
+                    <button type="submit"
+                            class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">
+                        アップロード
+                    </button>
+                    <a href="{{ route('spec-images.index') }}" class="text-indigo-600 hover:underline">
+                        保存済み画像を見る
+                    </a>
+                </div>
+            </form>
+        </div>
+
         {{-- 最近作成したグループ --}}
         <div class="bg-white shadow rounded-lg">
             <div class="px-4 py-3 border-b">
@@ -116,5 +140,6 @@
                 </table>
             </div>
         </div>
+
     </div>
 </x-app-layout>
