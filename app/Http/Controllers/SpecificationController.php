@@ -223,22 +223,40 @@ class SpecificationController extends Controller
         }
     }
 
-
-
-
     /** CR 承認（現行版を切替） */
-    public function approve(SpecChangeRequest $cr): RedirectResponse
+    public function approve(\Illuminate\Http\Request $request, SpecChangeRequest $cr): \Illuminate\Http\RedirectResponse
     {
-        $cr->update([
-            'status'      => 'approved',
-            'approved_by' => auth()->id(),
-        ]);
+        // 既に承認済ならそのまま仕様詳細へ
+        if ($cr->status === 'approved') {
+            return redirect()->route('specifications.show', [
+                'specification' => $cr->specification_id,
+                'project'       => $cr->project_id,
+            ])->with('status', 'この変更要求は既に承認済みです。');
+        }
 
-        $cr->specification->update([
-            'current_version_id' => $cr->to_version_id,
-        ]);
+        DB::transaction(function () use ($cr) {
+            // 防御：to_version_id が無ければ承認不可
+            if (!$cr->to_version_id) {
+                throw new \RuntimeException('to_version_id が存在しません。');
+            }
 
-        return back();
+            // 仕様の現行版を提案版に切替
+            $cr->specification()->update([
+                'current_version_id' => $cr->to_version_id,
+            ]);
+
+            // CR を承認済みに
+            $cr->forceFill([
+                'status'      => 'approved',
+                'approved_by' => auth()->id(),
+            ])->save();
+        });
+
+        // 承認後は仕様詳細へ（編集が反映された状態）
+        return redirect()->route('specifications.show', [
+            'specification' => $cr->specification_id,
+            'project'       => $cr->project_id,
+        ])->with('status', '変更を反映しました。');
     }
 
 
@@ -262,5 +280,29 @@ class SpecificationController extends Controller
             'ver'           => $ver,
         ]);
     }
+
+
+    public function showChangeRequest(Request $request, SpecChangeRequest $cr): View
+    {
+        // ?project= が来ていれば優先、無ければ CR 側
+        $project = Project::findOrFail(
+            (int) $request->input('project', $cr->project_id)
+        );
+
+        // 必要なら関連を lazy load（リレーション名は実装に合わせて）
+        $cr->loadMissing([
+            'specification',
+            'fromVersion',
+            'toVersion',
+            'requestedBy',
+            // 'approvedBy',
+        ]);
+
+        return view('spec_change_requests.show', [
+            'project' => $project,
+            'cr'      => $cr,
+        ]);
+    }
+
 
 }

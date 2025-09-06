@@ -34,9 +34,17 @@ Route::middleware('auth')->group(function () {
 
     // 仕様書（DB管理リソース）
     Route::resource('specifications', SpecificationController::class);
-    Route::prefix('spec-change-requests')->name('spec-change-requests.')->controller(SpecificationController::class)->group(function () {
-        Route::post('{cr}/approve', 'approve')->name('approve');
+    Route::prefix('spec-change-requests')
+        ->name('spec-change-requests.')
+        ->controller(SpecificationController::class)
+        ->group(function () {
+            // ← これを追加：詳細表示
+            Route::get('{cr}', 'showChangeRequest')->name('show');  // spec-change-requests.show
+
+            // 既存（承認）
+            Route::post('{cr}/approve', 'approve')->name('approve');
     });
+
 
     // 画像アップロード（spec-images）
     Route::prefix('spec-images')->name('spec-images.')->controller(SpecImageController::class)->group(function () {
