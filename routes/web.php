@@ -57,21 +57,21 @@ Route::middleware(['auth'])->group(function () {
 
 
     // 仕様書セットをコントロールするルート
-        // セット一覧 + アップロード
     Route::get('/spec-sets', [SpecificationMdListController::class, 'index'])->name('specsets.index');
     Route::post('/spec-sets/upload', [SpecificationMdListController::class, 'upload'])->name('specsets.upload');
 
-    // セット表示（index.md）
-    Route::get('/spec-sets/{set}', [SpecificationMdListController::class, 'showIndex'])->name('specsets.show');
+    // ここを日本語OKに（スラッシュだけ禁止）
+    Route::get('/spec-sets/{set}', [SpecificationMdListController::class, 'showIndex'])
+        ->where('set', '[^/]+')->name('specsets.show');
 
-    // 任意の md を表示（set 内の相対 md）
     Route::get('/spec-sets/{set}/view/{path?}', [SpecificationMdListController::class, 'show'])
-        ->where('path', '.*')->name('specsets.view');
+        ->where('set', '[^/]+')->where('path', '.*')->name('specsets.view');
 
-    // 資材配信（画像・CSS・JS など）
     Route::get('/spec-sets/{set}/file/{path}', [SpecificationMdListController::class, 'file'])
-        ->where('path', '.*')->name('specsets.file');
+        ->where('set', '[^/]+')->where('path', '.*')->name('specsets.file');
 
+    Route::patch('/spec-sets/{set}/rename', [SpecificationMdListController::class, 'rename'])
+        ->where('set', '[^/]+')->name('specsets.rename');
 
 });
 

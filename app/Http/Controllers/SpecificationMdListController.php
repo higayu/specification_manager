@@ -33,6 +33,7 @@ class SpecificationMdListController extends Controller
         return view('spec-sets.index', compact('sets'));
     }
 
+
     /** ZIP アップロード（index.md を含む 1セット） */
     public function upload(Request $request)
     {
@@ -42,16 +43,30 @@ class SpecificationMdListController extends Controller
         ]);
 
         $zipFile = $request->file('zip');
-        $slug = Str::slug($request->input('set_name') ?: pathinfo($zipFile->getClientOriginalName(), PATHINFO_FILENAME));
-        if ($slug === '') $slug = 'set_'.Str::random(6);
+
+        // 入力の set_name を優先、無ければ ZIP ファイル名（拡張子除く）を使う
+        $rawName = $request->input('set_name');
+        if ($rawName === null || trim($rawName) === '') {
+            $rawName = pathinfo($zipFile->getClientOriginalName(), PATHINFO_FILENAME);
+        }
+
+        // 日本語を許可しつつ危険文字だけ弾く
+        $slug = $this->sanitizeFolderName($rawName) ?? ('セット_'.now()->format('Ymd_His'));
 
         $disk = Storage::disk('public');
         $base = "{$this->root}/{$slug}";
+
+        // 既存と衝突したら時刻サフィックスで回避
+        if ($disk->exists($base)) {
+            $slug .= '_'.now()->format('Ymd_His');
+            $base  = "{$this->root}/{$slug}";
+        }
+
         $disk->makeDirectory($base);
 
-        // 一時保存
+        // 一時保存から ZIP を開く
         $tmp = $zipFile->getRealPath();
-        $za = new ZipArchive();
+        $za = new \ZipArchive();
         if ($za->open($tmp) !== true) {
             return back()->with('status', 'ZIPを開けませんでした。');
         }
@@ -69,7 +84,7 @@ class SpecificationMdListController extends Controller
             $clean = preg_replace('@^([^/\\\\]+)[/\\\\]@', '', $entry, 1, $removed);
             if ($removed === 0) $clean = $entry; // もともと直下
 
-            // 空エントリや隠しはスキップ
+            // 空エントリやディレクトリエントリ
             if ($clean === '' || str_ends_with($clean, '/')) {
                 $disk->makeDirectory("$base/$clean");
                 continue;
@@ -81,26 +96,28 @@ class SpecificationMdListController extends Controller
             $content = stream_get_contents($stream);
             fclose($stream);
 
-            // md は UTF-8 正規化
-            if (Str::endsWith(Str::lower($clean), '.md')) {
+            // .md は UTF-8 に正規化
+            if (\Illuminate\Support\Str::endsWith(\Illuminate\Support\Str::lower($clean), '.md')) {
                 if (!mb_check_encoding($content, 'UTF-8')) {
                     $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8, SJIS-win, CP932, EUC-JP, ISO-2022-JP');
                 }
             }
+
             $disk->put("$base/$clean", $content);
         }
         $za->close();
 
         // index.md が無ければエラー
         if (!$disk->exists("$base/index.md")) {
-            // 片付け（任意）
+            // 必要なら片付け
             // $disk->deleteDirectory($base);
             return back()->with('status', "index.md が見つかりません（セット: {$slug}）");
         }
 
-        Log::info('spec-set uploaded', ['set' => $slug, 'base' => $base]);
+        \Log::info('spec-set uploaded', ['set' => $slug, 'base' => $base]);
         return back()->with('status', "アップロードOK: {$slug}");
     }
+
 
     /** セットの index.md を表示 */
     public function showIndex(string $set)
@@ -221,4 +238,70 @@ class SpecificationMdListController extends Controller
             default => 'application/octet-stream',
         };
     }
+
+    public function rename(Request $request, string $set)
+    {
+        $request->validate([
+            'new_name' => ['required','string','max:100'],
+        ]);
+
+        $new = $this->sanitizeFolderName($request->input('new_name'));
+        if ($new === null) {
+            return back()->with('status', '無効な名前です。スラッシュ・制御文字・先頭ドット・.. は使用できません。');
+        }
+        if ($new === $set) {
+            return back()->with('status', '同じ名前です（変更はありません）。');
+        }
+
+        $disk   = \Storage::disk('public');
+        $oldRel = "{$this->root}/{$set}";
+        $newRel = "{$this->root}/{$new}";
+
+        if (!$disk->exists($oldRel)) abort(404);
+        if ($disk->exists($newRel)) {
+            return back()->with('status', "既に同名のセットが存在します：{$new}");
+        }
+
+        $oldAbs = $disk->path($oldRel);
+        $newAbs = $disk->path($newRel);
+
+        $ok = @rename($oldAbs, $newAbs);
+        if (!$ok) {
+            $disk->makeDirectory($newRel);
+            foreach ($disk->allDirectories($oldRel) as $dir) {
+                $suffix = \Illuminate\Support\Str::after($dir, $oldRel.'/');
+                $disk->makeDirectory($newRel.'/'.$suffix);
+            }
+            foreach ($disk->allFiles($oldRel) as $file) {
+                $suffix = \Illuminate\Support\Str::after($file, $oldRel.'/');
+                $disk->move($file, $newRel.'/'.$suffix);
+            }
+            $disk->deleteDirectory($oldRel);
+        }
+
+        \Log::info('spec-set renamed', ['from' => $set, 'to' => $new]);
+        return back()->with('status', "名称を変更しました：{$set} → {$new}");
+    }
+
+
+    private function sanitizeFolderName(string $name): ?string
+    {
+        // 前後の空白を除去
+        $name = trim($name);
+
+        // 空/制御文字/スラッシュ/バックスラッシュ/ヌル文字/先頭ドット/ .. を禁止
+        if (
+            $name === '' ||
+            preg_match('/[\x00-\x1F\x7F]/u', $name) || // 制御文字
+            str_contains($name, '/') ||
+            str_contains($name, '\\') ||
+            str_contains($name, "\0") ||
+            str_starts_with($name, '.') ||
+            str_contains($name, '..')
+        ) {
+            return null;
+        }
+        return $name; // 日本語・記号（/ 以外）は許可
+    }
+
 }
