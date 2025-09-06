@@ -4,75 +4,80 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BulletTestCaseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SpecificationController;
-use App\Http\Controllers\SpecImageController;   // ← これを追加！
+use App\Http\Controllers\SpecImageController;
 use App\Http\Controllers\SpecMdController;
-use App\Http\Controllers\SpecificationMdListController;//仕様書セットをコントロールする
-use App\Models\Project; // ← プロジェクトモデルを使う
+use App\Http\Controllers\SpecificationMdListController;
+use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->group(function () {
+// 共通パラメータ制約（日本語OK／スラッシュのみ禁止）
+Route::pattern('set', '[^/]+');
+
+Route::middleware('auth')->group(function () {
     // / にアクセスしたらプロジェクト選択画面へ
     Route::get('/', function () {
         $projects = Project::orderBy('key')->get();
         return view('projects.select', compact('projects'));
     })->name('projects.select');
 
-    Route::post('/spec-images/upload', [SpecImageController::class, 'store'])->name('spec-images.upload');
-    Route::get('/spec-images', [SpecImageController::class, 'index'])->name('spec-images.index');
-
-    Route::get('/spec-md', [SpecMdController::class, 'index'])->name('spec-md.index');
-    Route::post('/spec-md/upload', [SpecMdController::class, 'store'])->name('spec-md.upload');
-
-    // 追加：表示/ダウンロード
-    Route::get('/spec-md/show/{filename}', [SpecMdController::class, 'show'])
-        ->where('filename', '.*')->name('spec-md.show');
-
-    Route::get('/spec-md/download/{filename}', [SpecMdController::class, 'download'])
-        ->where('filename', '.*')->name('spec-md.download');
-
-    // routes/web.php
+    // ダッシュボード
     Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->middleware(['verified'])
+        ->middleware('verified')
         ->name('dashboard');
 
-    Route::resource('specifications', SpecificationController::class)->middleware(['auth']);
-    Route::post('spec-change-requests/{cr}/approve', [SpecificationController::class,'approve'])
-    ->name('spec-change-requests.approve')->middleware(['auth']);
-
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // プロジェクト単位のテストケース関連
-    Route::prefix('projects/{project}')->group(function () {
-        Route::get('bullet-cases', [BulletTestCaseController::class,'index'])->name('bullet-cases.index');
-        Route::get('bullet-cases/create', [BulletTestCaseController::class,'create'])->name('bullet-cases.create');
-        Route::post('bullet-cases', [BulletTestCaseController::class,'store'])->name('bullet-cases.store');
+    // プロフィール
+    Route::prefix('profile')->name('profile.')->controller(ProfileController::class)->group(function () {
+        Route::get('/', 'edit')->name('edit');
+        Route::patch('/', 'update')->name('update');
+        Route::delete('/', 'destroy')->name('destroy');
     });
 
-    Route::patch('bullet-case-rows/{row}', [BulletTestCaseController::class,'update'])
-        ->name('bullet-cases.rows.update');
-    // 行の完了フラグ切替
-    Route::post('bullet-case-rows/{row}/toggle', [BulletTestCaseController::class,'toggle'])->name('bullet-cases.rows.toggle');
+    // 仕様書（DB管理リソース）
+    Route::resource('specifications', SpecificationController::class);
+    Route::prefix('spec-change-requests')->name('spec-change-requests.')->controller(SpecificationController::class)->group(function () {
+        Route::post('{cr}/approve', 'approve')->name('approve');
+    });
 
+    // 画像アップロード（spec-images）
+    Route::prefix('spec-images')->name('spec-images.')->controller(SpecImageController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/upload', 'store')->name('upload');
+    });
 
-    // 仕様書セットをコントロールするルート
-    Route::get('/spec-sets', [SpecificationMdListController::class, 'index'])->name('specsets.index');
-    Route::post('/spec-sets/upload', [SpecificationMdListController::class, 'upload'])->name('specsets.upload');
+    // Markdownファイル（spec-md）
+    Route::prefix('spec-md')->name('spec-md.')->controller(SpecMdController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/upload', 'store')->name('upload');
+        Route::get('/show/{filename}', 'show')->where('filename', '.*')->name('show');
+        Route::get('/download/{filename}', 'download')->where('filename', '.*')->name('download');
+    });
 
-    // ここを日本語OKに（スラッシュだけ禁止）
-    Route::get('/spec-sets/{set}', [SpecificationMdListController::class, 'showIndex'])
-        ->where('set', '[^/]+')->name('specsets.show');
+    // 仕様書セット（spec-sets）
+    Route::prefix('spec-sets')->name('specsets.')->controller(SpecificationMdListController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/upload', 'upload')->name('upload');
 
-    Route::get('/spec-sets/{set}/view/{path?}', [SpecificationMdListController::class, 'show'])
-        ->where('set', '[^/]+')->where('path', '.*')->name('specsets.view');
+        Route::get('{set}', 'showIndex')->name('show');
+        Route::get('{set}/view/{path?}', 'show')->where('path', '.*')->name('view');
+        Route::get('{set}/file/{path}', 'file')->where('path', '.*')->name('file');
+        Route::patch('{set}/rename', 'rename')->name('rename');
+    });
 
-    Route::get('/spec-sets/{set}/file/{path}', [SpecificationMdListController::class, 'file'])
-        ->where('set', '[^/]+')->where('path', '.*')->name('specsets.file');
+    // プロジェクト単位のテストケース
+    Route::prefix('projects/{project}')
+        ->name('bullet-cases.')
+        ->controller(BulletTestCaseController::class)
+        ->group(function () {
+            Route::get('bullet-cases', 'index')->name('index');
+            Route::get('bullet-cases/create', 'create')->name('create');
+            Route::post('bullet-cases', 'store')->name('store');
+        });
 
-    Route::patch('/spec-sets/{set}/rename', [SpecificationMdListController::class, 'rename'])
-        ->where('set', '[^/]+')->name('specsets.rename');
-
+    // テストケース行操作（行単位）
+    Route::prefix('bullet-case-rows')->name('bullet-cases.rows.')->controller(BulletTestCaseController::class)->group(function () {
+        Route::patch('{row}', 'update')->name('update');
+        Route::post('{row}/toggle', 'toggle')->name('toggle');
+    });
 });
 
 require __DIR__.'/auth.php';
