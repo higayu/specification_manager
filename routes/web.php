@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SpecificationController;
 use App\Http\Controllers\SpecImageController;   // ← これを追加！
 use App\Http\Controllers\SpecMdController;
+use App\Http\Controllers\SpecificationMdListController;//仕様書セットをコントロールする
 use App\Models\Project; // ← プロジェクトモデルを使う
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +54,25 @@ Route::middleware(['auth'])->group(function () {
         ->name('bullet-cases.rows.update');
     // 行の完了フラグ切替
     Route::post('bullet-case-rows/{row}/toggle', [BulletTestCaseController::class,'toggle'])->name('bullet-cases.rows.toggle');
+
+
+    // 仕様書セットをコントロールするルート
+        // セット一覧 + アップロード
+    Route::get('/spec-sets', [SpecificationMdListController::class, 'index'])->name('specsets.index');
+    Route::post('/spec-sets/upload', [SpecificationMdListController::class, 'upload'])->name('specsets.upload');
+
+    // セット表示（index.md）
+    Route::get('/spec-sets/{set}', [SpecificationMdListController::class, 'showIndex'])->name('specsets.show');
+
+    // 任意の md を表示（set 内の相対 md）
+    Route::get('/spec-sets/{set}/view/{path?}', [SpecificationMdListController::class, 'show'])
+        ->where('path', '.*')->name('specsets.view');
+
+    // 資材配信（画像・CSS・JS など）
+    Route::get('/spec-sets/{set}/file/{path}', [SpecificationMdListController::class, 'file'])
+        ->where('path', '.*')->name('specsets.file');
+
+
 });
 
 require __DIR__.'/auth.php';

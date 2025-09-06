@@ -111,6 +111,33 @@
             </a>
         </div>
 
+        {{-- 仕様書セットカード --}}
+        <div class="bg-white shadow rounded-lg p-4">
+            <h3 class="text-lg font-semibold mb-2">仕様書セット</h3>
+            <p class="text-sm text-gray-600 mb-3">
+                Markdown と画像を含む仕様書セットをアップロード・閲覧できます。
+            </p>
+            <div class="flex gap-3">
+                <a href="{{ route('specsets.index') }}"
+                    class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                    一覧を見る
+                </a>
+                <form action="{{ route('specsets.upload') }}"
+                        method="POST"
+                        enctype="multipart/form-data"
+                        class="flex items-center space-x-2">
+                    @csrf
+                    <input type="file" name="zip"
+                            accept=".zip"
+                            class="text-sm border rounded p-1">
+                    <button type="submit"
+                            class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700">
+                        アップロード
+                    </button>
+                </form>
+            </div>
+        </div>
+
         {{-- 最近作成したグループ --}}
         <div class="bg-white shadow rounded-lg">
             <div class="px-4 py-3 border-b">
