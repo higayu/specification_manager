@@ -86,6 +86,31 @@
             </form>
         </div>
 
+        {{-- mdファイルの処理 --}}
+        <div class="card mb-4 bg-white shadow rounded-lg p-4">
+            {{-- アップロードフォーム --}}
+            <div class="card mb-6">
+            <div class="card-header">Markdownアップロード</div>
+            <div class="card-body">
+                @if (session('status'))
+                <div class="alert alert-success">{{ session('status') }}</div>
+                @endif
+
+                <form action="{{ route('spec-md.upload') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <input type="file" name="mdfile" class="form-control mb-3" required>
+                {{-- ↑ controller の validate キー 'mdfile' に合わせる --}}
+                <button type="submit" class="btn btn-primary">アップロード</button>
+                </form>
+            </div>
+            </div>
+
+            {{-- 一覧ページへ遷移するボタン --}}
+            <a href="{{ route('spec-md.index') }}" class="btn btn-secondary">
+            保存済みMarkdownを見る
+            </a>
+        </div>
+
         {{-- 最近作成したグループ --}}
         <div class="bg-white shadow rounded-lg">
             <div class="px-4 py-3 border-b">

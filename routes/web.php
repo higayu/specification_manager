@@ -5,6 +5,7 @@ use App\Http\Controllers\BulletTestCaseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SpecificationController;
 use App\Http\Controllers\SpecImageController;   // ← これを追加！
+use App\Http\Controllers\SpecMdController;
 use App\Models\Project; // ← プロジェクトモデルを使う
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/spec-images/upload', [SpecImageController::class, 'store'])->name('spec-images.upload');
     Route::get('/spec-images', [SpecImageController::class, 'index'])->name('spec-images.index');
 
+    Route::get('/spec-md', [SpecMdController::class, 'index'])->name('spec-md.index');
+    Route::post('/spec-md/upload', [SpecMdController::class, 'store'])->name('spec-md.upload');
 
     // routes/web.php
     Route::get('/dashboard', [DashboardController::class, 'index'])
