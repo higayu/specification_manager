@@ -22,6 +22,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/spec-md', [SpecMdController::class, 'index'])->name('spec-md.index');
     Route::post('/spec-md/upload', [SpecMdController::class, 'store'])->name('spec-md.upload');
 
+    // 追加：表示/ダウンロード
+    Route::get('/spec-md/show/{filename}', [SpecMdController::class, 'show'])
+        ->where('filename', '.*')->name('spec-md.show');
+
+    Route::get('/spec-md/download/{filename}', [SpecMdController::class, 'download'])
+        ->where('filename', '.*')->name('spec-md.download');
+
     // routes/web.php
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware(['verified'])
