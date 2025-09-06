@@ -2,7 +2,7 @@
 -- ホスト:                          192.168.1.229
 -- サーバーのバージョン:                   12.0.2-MariaDB-ubu2404 - mariadb.org binary distribution
 -- サーバー OS:                      debian-linux-gnu
--- HeidiSQL バージョン:               12.6.0.6765
+-- HeidiSQL バージョン:               12.11.0.7065
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -89,21 +89,21 @@ INSERT INTO `bullet_test_case_rows` (`id`, `group_id`, `order_no`, `no`, `featur
 	(19, 2, 14, 'TC2-14', '成分計算', '上限超過', '赤色表示', 0, '2025-09-04 07:03:08', '2025-09-04 22:18:07', NULL, 2),
 	(20, 2, 15, 'TC2-15', '成分計算', '下限未満', '青色表示', 0, '2025-09-04 07:03:08', '2025-09-04 22:18:09', NULL, 2),
 	(21, 2, 16, 'TC2-16', '保存処理', '再計算後', 'DBにCEC～ホウ素・マンガン～ホウ素が保存される', 0, '2025-09-04 07:03:08', '2025-09-04 22:18:12', NULL, 2),
-	(22, 3, 1, 'TC3-1', '改良資材押下', '-', '管理画面が開く', 1, '2025-09-04 07:03:51', '2025-09-04 17:01:47', NULL, 3),
-	(23, 3, 2, 'TC3-2', '改良資材押下', '-', 'フラグ=1の全件が昇順表示', 0, '2025-09-04 07:03:51', '2025-09-04 07:03:51', NULL, 3),
-	(24, 3, 3, 'TC3-3', '改良資材押下', '-', '各元肥施肥量が空白にリセットされる', 0, '2025-09-04 07:03:51', '2025-09-04 07:03:51', NULL, 3),
-	(25, 4, 1, 'TC4-1', '作物押下', '-', '作物マスター管理画面が開く', 0, '2025-09-04 07:04:14', '2025-09-04 07:04:14', NULL, 3),
-	(26, 4, 2, 'TC4-2', '作物押下', '-', 'プルダウン選択が未選択に', 0, '2025-09-04 07:04:14', '2025-09-04 07:04:14', NULL, 3),
-	(27, 4, 3, 'TC4-3', '作物押下', '-', '上限・基準・下限が空白', 0, '2025-09-04 07:04:14', '2025-09-04 07:04:14', NULL, 3),
-	(28, 5, 1, 'TC5-1', 'ボカシ押下', '-', 'ボカシ管理画面が開く', 0, '2025-09-04 07:04:39', '2025-09-04 07:04:39', NULL, 3),
-	(29, 6, 1, 'TC6-1', 'プルダウン選択', '作物選択', '元肥基準/窒素～カリウムが設定される', 1, '2025-09-04 07:05:15', '2025-09-04 17:29:59', NULL, 3),
-	(30, 6, 2, 'TC6-2', 'プルダウン選択', '作物選択', 'Ca=K×6、Mg=Kが算出される', 1, '2025-09-04 07:05:15', '2025-09-04 17:28:58', NULL, 3),
-	(31, 6, 3, 'TC6-3', 'プルダウン選択', '作物選択', '上限=基準×1.2、下限=基準×0.8', 1, '2025-09-04 07:05:15', '2025-09-04 17:28:26', NULL, 3),
-	(32, 6, 4, 'TC6-4', 'プルダウン選択', '上限超過', '赤色表示', 1, '2025-09-04 07:05:15', '2025-09-04 16:54:52', NULL, 3),
-	(33, 6, 5, 'TC6-5', 'プルダウン選択', '下限未満', '青色表示', 1, '2025-09-04 07:05:15', '2025-09-04 16:54:55', NULL, 3),
-	(34, 7, 1, 'TC7-1', '出力押下', '-', '再計算イベントが実施される', 1, '2025-09-04 07:05:48', '2025-09-04 16:55:03', NULL, 3),
-	(35, 7, 2, 'TC7-2', '出力押下', '-', 'Excel帳票が出力される（ボタン非表示）', 1, '2025-09-04 07:05:48', '2025-09-04 16:55:07', NULL, 3),
-	(36, 8, 1, 'TC8-1', '画面を閉じる', '-', 'CEC～ホウ素、マンガン～ホウ素がDBに保存される', 0, '2025-09-04 07:06:14', '2025-09-04 07:06:14', NULL, 3);
+	(22, 3, 1, 'TC3-1', '改良資材押下', '-', '管理画面が開く', 1, '2025-09-04 07:03:51', '2025-09-05 15:07:25', NULL, 2),
+	(23, 3, 2, 'TC3-2', '改良資材押下', '-', 'フラグ=1の全件が昇順表示', 0, '2025-09-04 07:03:51', '2025-09-05 00:16:20', NULL, 2),
+	(24, 3, 3, 'TC3-3', '改良資材押下', '-', '各元肥施肥量が空白にリセットされる', 0, '2025-09-04 07:03:51', '2025-09-05 00:16:24', NULL, 2),
+	(25, 4, 1, 'TC4-1', '作物押下', '-', '作物マスター管理画面が開く', 0, '2025-09-04 07:04:14', '2025-09-05 00:16:28', NULL, 2),
+	(26, 4, 2, 'TC4-2', '作物押下', '-', 'プルダウン選択が未選択に', 0, '2025-09-04 07:04:14', '2025-09-05 00:16:31', NULL, 2),
+	(27, 4, 3, 'TC4-3', '作物押下', '-', '上限・基準・下限が空白', 0, '2025-09-04 07:04:14', '2025-09-05 00:16:34', NULL, 2),
+	(28, 5, 1, 'TC5-1', 'ボカシ押下', '-', 'ボカシ管理画面が開く', 0, '2025-09-04 07:04:39', '2025-09-05 00:16:38', NULL, 2),
+	(29, 6, 1, 'TC6-1', 'プルダウン選択', '作物選択', '元肥基準/窒素～カリウムが設定される', 1, '2025-09-04 07:05:15', '2025-09-05 15:07:31', NULL, 2),
+	(30, 6, 2, 'TC6-2', 'プルダウン選択', '作物選択', 'Ca=K×6、Mg=Kが算出される', 1, '2025-09-04 07:05:15', '2025-09-05 15:07:39', NULL, 2),
+	(31, 6, 3, 'TC6-3', 'プルダウン選択', '作物選択', '上限=基準×1.2、下限=基準×0.8', 1, '2025-09-04 07:05:15', '2025-09-05 15:07:45', NULL, 2),
+	(32, 6, 4, 'TC6-4', 'プルダウン選択', '上限超過', '赤色表示', 1, '2025-09-04 07:05:15', '2025-09-05 15:07:50', NULL, 2),
+	(33, 6, 5, 'TC6-5', 'プルダウン選択', '下限未満', '青色表示', 1, '2025-09-04 07:05:15', '2025-09-05 15:07:55', NULL, 2),
+	(34, 7, 1, 'TC7-1', '出力押下', '-', '再計算イベントが実施される', 1, '2025-09-04 07:05:48', '2025-09-05 15:08:00', NULL, 2),
+	(35, 7, 2, 'TC7-2', '出力押下', '-', 'Excel帳票が出力される（ボタン非表示）', 1, '2025-09-04 07:05:48', '2025-09-05 15:08:05', NULL, 2),
+	(36, 8, 1, 'TC8-1', '画面を閉じる', '-', 'CEC～ホウ素、マンガン～ホウ素がDBに保存される', 0, '2025-09-04 07:06:14', '2025-09-05 00:16:43', NULL, 2);
 
 --  テーブル specification_manager.cache の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `cache` (
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `cache` (
   PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.cache: ~0 rows (約) のデータをダンプしています
+-- テーブル specification_manager.cache: ~3 rows (約) のデータをダンプしています
 
 --  テーブル specification_manager.change_requests の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `change_requests` (
@@ -275,14 +275,14 @@ CREATE TABLE IF NOT EXISTS `role_has_permissions` (
 -- テーブル specification_manager.role_has_permissions: ~10 rows (約) のデータをダンプしています
 INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(1, 1),
-	(2, 1),
-	(3, 1),
-	(4, 1),
-	(5, 1),
 	(1, 2),
+	(2, 1),
 	(2, 2),
+	(3, 1),
 	(3, 2),
+	(4, 1),
 	(4, 2),
+	(5, 1),
 	(5, 3);
 
 --  テーブル specification_manager.sessions の構造をダンプしています
@@ -298,10 +298,9 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   KEY `sessions_last_activity_index` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.sessions: ~1 rows (約) のデータをダンプしています
+-- テーブル specification_manager.sessions: ~4 rows (約) のデータをダンプしています
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-	('qWsEHpLYnUoZRRVVQmaEZ5BqGJXv8ekV2pXd6HGo', 2, '192.168.1.40', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiYzU3UndlVm16b3dDOHdoOHBORlUzQ1Q5emd2eTQ0OEpDMXN1Tzc0YyI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjU3OiJodHRwOi8vMTkyLjE2OC4xLjIyOTo4MDAxL3NwZWNpZmljYXRpb25zLzIvZWRpdD9wcm9qZWN0PTIiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyO30=', 1757062236),
-	('SI2WwRjNkK2ebX7tmtfHuvUdzG07wPEK4JHUoHv9', 2, '192.168.1.136', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiVjlvNnl3MHdCUUQ5dHZyS0dQRjBqaHZsbmxpMzM3ZHNsM0VTc3JkeCI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjQ5OiJodHRwOi8vMTkyLjE2OC4xLjIyOTo4MDAxL3Byb2plY3RzLzIvYnVsbGV0LWNhc2VzIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1757057505);
+	('s2XxY1VPtS9EUckUP7kPNTsEqXb9PfaPoG6O3Uww', 2, '192.168.1.2', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoicEdKakl4TDZzS3FQZGRhTERHSjNtQU5FbU5JdVNVekRnUmJvcWhkSSI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjUyOiJodHRwOi8vMTkyLjE2OC4xLjIyOTo4MDAxL3NwZWNpZmljYXRpb25zLzM/cHJvamVjdD0xIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MjtzOjE3OiJwYXNzd29yZF9oYXNoX3dlYiI7czo2MDoiJDJ5JDEyJExDN1ZodHQ2OUE4YldWRmpTNXhMZWVuakNwOVo0Qks5SjBXLmVoLnR4MWliZGdZc016ZWI2Ijt9', 1757139839);
 
 --  テーブル specification_manager.specifications の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `specifications` (
@@ -318,19 +317,21 @@ CREATE TABLE IF NOT EXISTS `specifications` (
   KEY `specifications_current_version_id_foreign` (`current_version_id`),
   CONSTRAINT `specifications_current_version_id_foreign` FOREIGN KEY (`current_version_id`) REFERENCES `specification_versions` (`id`) ON DELETE SET NULL,
   CONSTRAINT `specifications_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.specifications: ~1 rows (約) のデータをダンプしています
+-- テーブル specification_manager.specifications: ~3 rows (約) のデータをダンプしています
 INSERT INTO `specifications` (`id`, `project_id`, `code`, `title`, `status`, `current_version_id`, `created_at`, `updated_at`) VALUES
 	(1, 2, 'MainForm.SummarizeTable.cs', '土壌分析値について', 'approved', 1, '2025-09-04 22:41:43', '2025-09-04 22:41:43'),
-	(2, 2, 'order_numとactive_flg', '表示フラグと表示順の値', 'approved', 2, '2025-09-04 23:28:03', '2025-09-04 23:28:03');
+	(2, 2, 'order_numとactive_flg', '表示フラグと表示順の値', 'approved', 2, '2025-09-04 23:28:03', '2025-09-04 23:28:03'),
+	(3, 1, '.env', '使用している開発環境', 'approved', 9, '2025-09-05 00:51:06', '2025-09-05 21:23:59');
 
 --  テーブル specification_manager.specification_versions の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `specification_versions` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `specification_id` bigint(20) unsigned NOT NULL,
   `version_no` int(10) unsigned NOT NULL,
-  `body_md` longtext NOT NULL,
+  `body_md` longtext DEFAULT NULL,
+  `body_path_flg` enum('md','html') DEFAULT 'md',
   `attributes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`attributes`)),
   `created_by` bigint(20) unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -340,12 +341,19 @@ CREATE TABLE IF NOT EXISTS `specification_versions` (
   KEY `specification_versions_created_by_foreign` (`created_by`),
   CONSTRAINT `specification_versions_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `specification_versions_specification_id_foreign` FOREIGN KEY (`specification_id`) REFERENCES `specifications` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.specification_versions: ~1 rows (約) のデータをダンプしています
-INSERT INTO `specification_versions` (`id`, `specification_id`, `version_no`, `body_md`, `attributes`, `created_by`, `created_at`, `updated_at`) VALUES
-	(1, 1, 1, '# 土壌分析値（青いセルの値）の保存タイミング\r\n- 再計算の実行\r\n- MainFormを閉じるタイミング\r\n\r\n## 保存前に確認ダイアログ\r\n- DBに保存前に毎回確認する', '[]', 2, '2025-09-04 22:41:43', '2025-09-04 22:41:43'),
-	(2, 2, 1, '似ている単語だから注意\n\n![rain](/storage/spec-images/2025/09/R9EMtj5dweoKVu5nQen3YTOAaepEPcrOnGYmPXNo.png)\n', '[]', 2, '2025-09-04 23:28:03', '2025-09-04 23:28:03');
+-- テーブル specification_manager.specification_versions: ~6 rows (約) のデータをダンプしています
+INSERT INTO `specification_versions` (`id`, `specification_id`, `version_no`, `body_md`, `body_path_flg`, `attributes`, `created_by`, `created_at`, `updated_at`) VALUES
+	(1, 1, 1, '# 土壌分析値（青いセルの値）の保存タイミング\r\n- 再計算の実行\r\n- MainFormを閉じるタイミング\r\n\r\n## 保存前に確認ダイアログ\r\n- DBに保存前に毎回確認する', 'md', '[]', 2, '2025-09-04 22:41:43', '2025-09-04 22:41:43'),
+	(2, 2, 1, '似ている単語だから注意\n\n![rain](/storage/spec-images/2025/09/R9EMtj5dweoKVu5nQen3YTOAaepEPcrOnGYmPXNo.png)\n', 'md', '[]', 2, '2025-09-04 23:28:03', '2025-09-04 23:28:03'),
+	(3, 3, 1, '- Whisper API\r\n- Gemini\n\n![back-kirby1](/storage/)\n', 'md', '[]', 2, '2025-09-05 00:51:06', '2025-09-05 00:51:06'),
+	(4, 3, 2, '- Whisper API\r\n- Gemini\r\n\r\n![back-kirby1](/storage/)', 'md', '[]', 2, '2025-09-05 01:10:04', '2025-09-05 01:10:04'),
+	(5, 3, 3, '- Whisper API\r\n- Gemini', 'md', '[]', 2, '2025-09-05 20:32:44', '2025-09-05 20:32:44'),
+	(6, 3, 4, '- Whisper API\r\n- Gemini', 'md', '[]', 2, '2025-09-05 21:00:15', '2025-09-05 21:00:15'),
+	(7, 3, 5, '- Whisper API\r\n- Gemini', 'md', '[]', 2, '2025-09-05 21:16:39', '2025-09-05 21:16:39'),
+	(8, 3, 6, '- Whisper API\r\n- Gemini', 'md', '[]', 2, '2025-09-05 21:19:38', '2025-09-05 21:19:38'),
+	(9, 3, 7, '- Whisper API\r\n- Gemini', 'md', '[]', 2, '2025-09-05 21:23:56', '2025-09-05 21:23:56');
 
 --  テーブル specification_manager.spec_change_requests の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `spec_change_requests` (
@@ -374,9 +382,16 @@ CREATE TABLE IF NOT EXISTS `spec_change_requests` (
   CONSTRAINT `spec_change_requests_requested_by_foreign` FOREIGN KEY (`requested_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `spec_change_requests_specification_id_foreign` FOREIGN KEY (`specification_id`) REFERENCES `specifications` (`id`) ON DELETE CASCADE,
   CONSTRAINT `spec_change_requests_to_version_id_foreign` FOREIGN KEY (`to_version_id`) REFERENCES `specification_versions` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.spec_change_requests: ~0 rows (約) のデータをダンプしています
+-- テーブル specification_manager.spec_change_requests: ~3 rows (約) のデータをダンプしています
+INSERT INTO `spec_change_requests` (`id`, `project_id`, `specification_id`, `from_version_id`, `to_version_id`, `reason`, `impact`, `status`, `requested_by`, `approved_by`, `created_at`, `updated_at`) VALUES
+	(1, 1, 3, 3, 4, 'テストのため', '画像を', 'proposed', 2, NULL, '2025-09-05 01:10:04', '2025-09-05 01:10:04'),
+	(2, 1, 3, 3, 5, '画像削除', NULL, 'proposed', 2, NULL, '2025-09-05 20:32:44', '2025-09-05 20:32:44'),
+	(3, 1, 3, 3, 6, '画像削除', NULL, 'proposed', 2, NULL, '2025-09-05 21:00:15', '2025-09-05 21:00:15'),
+	(4, 1, 3, 3, 7, '画像のリンク削除', NULL, 'proposed', 2, NULL, '2025-09-05 21:16:39', '2025-09-05 21:16:39'),
+	(5, 1, 3, 3, 8, '画像のリンク削除', NULL, 'proposed', 2, NULL, '2025-09-05 21:19:38', '2025-09-05 21:19:38'),
+	(6, 1, 3, 3, 9, '画像のリンク削除', NULL, 'approved', 2, 2, '2025-09-05 21:23:56', '2025-09-05 21:23:59');
 
 --  テーブル specification_manager.spec_versions の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `spec_versions` (
