@@ -1,10 +1,3 @@
--- --------------------------------------------------------
--- ホスト:                          192.168.1.229
--- サーバーのバージョン:                   12.0.2-MariaDB-ubu2404 - mariadb.org binary distribution
--- サーバー OS:                      debian-linux-gnu
--- HeidiSQL バージョン:               12.11.0.7065
--- --------------------------------------------------------
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
@@ -14,19 +7,16 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-
--- specification_manager のデータベース構造をダンプしています
-CREATE DATABASE IF NOT EXISTS `specification_manager` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
+CREATE DATABASE IF NOT EXISTS `specification_manager` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `specification_manager`;
 
---  テーブル specification_manager.bullet_test_case_groups の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `bullet_test_case_groups` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` bigint(20) unsigned NOT NULL,
-  `specification_id` bigint(20) unsigned DEFAULT NULL,
-  `order_no` int(10) unsigned NOT NULL DEFAULT 1,
-  `title` varchar(255) NOT NULL,
-  `source_text` longtext DEFAULT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` bigint unsigned NOT NULL,
+  `specification_id` bigint unsigned DEFAULT NULL,
+  `order_no` int unsigned NOT NULL DEFAULT '1',
+  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `source_text` longtext COLLATE utf8mb4_general_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -36,7 +26,6 @@ CREATE TABLE IF NOT EXISTS `bullet_test_case_groups` (
   CONSTRAINT `bullet_test_case_groups_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.bullet_test_case_groups: ~8 rows (約) のデータをダンプしています
 INSERT INTO `bullet_test_case_groups` (`id`, `project_id`, `specification_id`, `order_no`, `title`, `source_text`, `created_at`, `updated_at`) VALUES
 	(1, 2, NULL, 1, '1. 初期表示', '- TC1-1 | 初期表示 | 土壌改良資材マスター存在 | フラグ=1のデータが昇順で表示される\n- TC1-2 | 初期表示 | 作物マスター存在 | 作物名がプルダウンに設定される\n- TC1-3 | 初期表示 | ボカシマスター存在 | 分析値・効率が設定される\n- TC1-4 | 初期表示 | DB.土壌分析値あり | CEC～ホウ素が表示される\n- TC1-5 | 初期表示 | DB.土壌分析値なし | 空白＋警告「土壌分析値を登録してください」が表示される', '2025-09-04 07:02:03', '2025-09-04 07:02:03'),
 	(2, 2, NULL, 2, '2. 再計算の実行時の判定処理', '- TC2-1 | 必須入力チェック | 作物名未選択 | エラー表示\n- TC2-2 | 必須入力チェック | 面積未入力 | エラー表示\n- TC2-3 | 必須入力チェック | ボカシ施肥量入力あり＋配合比率未入力 | エラー表示\n- TC2-4 | 必須入力チェック | ボカシ施肥量・明細部元肥施肥量いずれも未入力 | エラー表示\n- TC2-5 | ボカシ計算 | 施肥量・配合比率入力あり | 魚粉・油粕・米ぬかの元肥施肥量が算出される\n- TC2-6 | ボカシ計算 | ボカシ分析値=0 | ボカシ成分は空白\n- TC2-7 | ボカシ計算 | ボカシ施肥量入力あり | 圃場施肥量(元肥)が算出される\n- TC2-8 | 明細計算 | 元肥施肥量入力あり | 成分/窒素～ホウ素が算出される\n- TC2-9 | 明細計算 | 分析値=0 | 成分は空白\n- TC2-10 | 明細計算 | 元肥施肥量入力あり | 圃場施肥量(元肥)が算出される\n- TC2-11 | 成分計算 | 入力値あり | 肥料成分量が正しく算出される\n- TC2-12 | 成分計算 | 窒素計算 | 参考成分値=肥料成分量+0.1×(硝酸)²\n- TC2-13 | 成分計算 | リン酸～ホウ素 | 参考成分値=肥料成分量+土壌分析値\n- TC2-14 | 成分計算 | 上限超過 | 赤色表示\n- TC2-15 | 成分計算 | 下限未満 | 青色表示\n- TC2-16 | 保存処理 | 再計算後 | DBにCEC～ホウ素・マンガン～ホウ素が保存される', '2025-09-04 07:03:08', '2025-09-04 07:03:08'),
@@ -47,26 +36,24 @@ INSERT INTO `bullet_test_case_groups` (`id`, `project_id`, `specification_id`, `
 	(7, 2, NULL, 7, '7. 出力押下', '- TC7-1 | 出力押下 | - | 再計算イベントが実施される\n- TC7-2 | 出力押下 | - | Excel帳票が出力される（ボタン非表示）', '2025-09-04 07:05:48', '2025-09-04 07:05:48'),
 	(8, 2, NULL, 8, '8. 画面を閉じる', '- TC8-1 | 画面を閉じる | - | CEC～ホウ素、マンガン～ホウ素がDBに保存される', '2025-09-04 07:06:14', '2025-09-04 07:06:14');
 
---  テーブル specification_manager.bullet_test_case_rows の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `bullet_test_case_rows` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `group_id` bigint(20) unsigned NOT NULL,
-  `order_no` int(10) unsigned NOT NULL DEFAULT 1,
-  `no` varchar(255) DEFAULT NULL,
-  `feature` varchar(255) NOT NULL,
-  `input_condition` varchar(255) DEFAULT NULL,
-  `expected` text NOT NULL,
-  `is_done` tinyint(1) NOT NULL DEFAULT 0,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `group_id` bigint unsigned NOT NULL,
+  `order_no` int unsigned NOT NULL DEFAULT '1',
+  `no` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `feature` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `input_condition` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `expected` text COLLATE utf8mb4_general_ci NOT NULL,
+  `is_done` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `memo` varchar(255) DEFAULT NULL,
-  `priority` tinyint(4) NOT NULL DEFAULT 2,
+  `memo` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `priority` tinyint NOT NULL DEFAULT '2',
   PRIMARY KEY (`id`),
   KEY `bullet_test_case_rows_group_id_foreign` (`group_id`),
   CONSTRAINT `bullet_test_case_rows_group_id_foreign` FOREIGN KEY (`group_id`) REFERENCES `bullet_test_case_groups` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.bullet_test_case_rows: ~36 rows (約) のデータをダンプしています
 INSERT INTO `bullet_test_case_rows` (`id`, `group_id`, `order_no`, `no`, `feature`, `input_condition`, `expected`, `is_done`, `created_at`, `updated_at`, `memo`, `priority`) VALUES
 	(1, 1, 1, 'TC1-1', '初期表示', '土壌改良資材マスター存在', 'フラグ=1のデータが昇順で表示される', 1, '2025-09-04 07:02:03', '2025-09-04 22:17:04', 'フラグの値は小さいほうが優先？', 2),
 	(2, 1, 2, 'TC1-2', '初期表示', '作物マスター存在', '作物名がプルダウンに設定される', 1, '2025-09-04 07:02:03', '2025-09-04 22:17:23', NULL, 2),
@@ -105,24 +92,21 @@ INSERT INTO `bullet_test_case_rows` (`id`, `group_id`, `order_no`, `no`, `featur
 	(35, 7, 2, 'TC7-2', '出力押下', '-', 'Excel帳票が出力される（ボタン非表示）', 1, '2025-09-04 07:05:48', '2025-09-05 15:08:05', NULL, 2),
 	(36, 8, 1, 'TC8-1', '画面を閉じる', '-', 'CEC～ホウ素、マンガン～ホウ素がDBに保存される', 0, '2025-09-04 07:06:14', '2025-09-05 00:16:43', NULL, 2);
 
---  テーブル specification_manager.cache の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `cache` (
-  `key` varchar(255) NOT NULL,
-  `value` mediumtext NOT NULL,
-  `expiration` int(11) NOT NULL,
+  `key` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `value` mediumtext COLLATE utf8mb4_general_ci NOT NULL,
+  `expiration` int NOT NULL,
   PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.cache: ~3 rows (約) のデータをダンプしています
 
---  テーブル specification_manager.change_requests の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `change_requests` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `requirement_id` bigint(20) unsigned NOT NULL,
-  `old_version_id` bigint(20) unsigned NOT NULL,
-  `new_version_id` bigint(20) unsigned DEFAULT NULL,
-  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
-  `approved_by` bigint(20) unsigned DEFAULT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `requirement_id` bigint unsigned NOT NULL,
+  `old_version_id` bigint unsigned NOT NULL,
+  `new_version_id` bigint unsigned DEFAULT NULL,
+  `status` enum('pending','approved','rejected') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'pending',
+  `approved_by` bigint unsigned DEFAULT NULL,
   `approved_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -137,17 +121,29 @@ CREATE TABLE IF NOT EXISTS `change_requests` (
   CONSTRAINT `change_requests_requirement_id_foreign` FOREIGN KEY (`requirement_id`) REFERENCES `requirements` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.change_requests: ~0 rows (約) のデータをダンプしています
 
---  テーブル specification_manager.migrations の構造をダンプしています
+CREATE TABLE IF NOT EXISTS `features` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `features_name_unique` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `features` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
+	(1, '初期表示', NULL, '2025-09-08 01:10:52', '2025-09-08 01:10:52'),
+	(2, '必須入力チェック', NULL, '2025-09-08 01:11:47', '2025-09-08 01:11:47'),
+	(3, 'ボカシ計算', NULL, '2025-09-08 01:20:58', '2025-09-08 01:20:58');
+
 CREATE TABLE IF NOT EXISTS `migrations` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `migration` varchar(255) NOT NULL,
-  `batch` int(11) NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `migration` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `batch` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.migrations: ~13 rows (約) のデータをダンプしています
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(1, '2025_09_04_071206_create_core_tables', 1),
 	(2, '2025_09_04_072050_create_users_table', 1),
@@ -163,45 +159,39 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(12, '2025_09_04_142517_create_bullet_test_cases_table', 7),
 	(13, '2025_09_05_000000_create_specification_tables', 8);
 
---  テーブル specification_manager.model_has_permissions の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `model_has_permissions` (
-  `permission_id` bigint(20) unsigned NOT NULL,
-  `model_type` varchar(255) NOT NULL,
-  `model_id` bigint(20) unsigned NOT NULL,
+  `permission_id` bigint unsigned NOT NULL,
+  `model_type` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `model_id` bigint unsigned NOT NULL,
   PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
   KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`),
   CONSTRAINT `model_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.model_has_permissions: ~0 rows (約) のデータをダンプしています
 
---  テーブル specification_manager.model_has_roles の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `model_has_roles` (
-  `role_id` bigint(20) unsigned NOT NULL,
-  `model_type` varchar(255) NOT NULL,
-  `model_id` bigint(20) unsigned NOT NULL,
+  `role_id` bigint unsigned NOT NULL,
+  `model_type` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `model_id` bigint unsigned NOT NULL,
   PRIMARY KEY (`role_id`,`model_id`,`model_type`),
   KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`),
   CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.model_has_roles: ~2 rows (約) のデータをダンプしています
 INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
 	(1, 'App\\Models\\User', 1),
 	(1, 'App\\Models\\User', 2);
 
---  テーブル specification_manager.permissions の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `permissions` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `guard_name` varchar(255) NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `guard_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.permissions: ~5 rows (約) のデータをダンプしています
 INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
 	(1, 'manage projects', 'web', '2025-09-04 04:11:41', '2025-09-04 04:11:41'),
 	(2, 'manage requirements', 'web', '2025-09-04 04:11:41', '2025-09-04 04:11:41'),
@@ -209,33 +199,30 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 	(4, 'approve changes', 'web', '2025-09-04 04:11:42', '2025-09-04 04:11:42'),
 	(5, 'run tests', 'web', '2025-09-04 04:11:42', '2025-09-04 04:11:42');
 
---  テーブル specification_manager.projects の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `projects` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `key` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text COLLATE utf8mb4_general_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.projects: ~2 rows (約) のデータをダンプしています
 INSERT INTO `projects` (`id`, `key`, `name`, `description`, `created_at`, `updated_at`) VALUES
 	(1, 'whisper', '東広島市：相談業務支援録音アプリ', 'WhisperとOpenAIの文字起こしアプリ', '2025-09-04 04:26:40', '2025-09-04 04:26:40'),
 	(2, 'cscustomtable', '七福神の会：施肥設計アプリ', 'WindowsFormアプリケーション\n自作カスタムコントロールのテーブル使用', '2025-09-04 04:29:01', '2025-09-04 04:29:01');
 
---  テーブル specification_manager.requirements の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `requirements` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` bigint(20) unsigned NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text NOT NULL,
-  `current_version_id` bigint(20) unsigned DEFAULT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` bigint unsigned NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text COLLATE utf8mb4_general_ci NOT NULL,
+  `current_version_id` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `name` varchar(50) DEFAULT NULL,
-  `status` varchar(32) NOT NULL DEFAULT 'draft',
+  `name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `status` varchar(32) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'draft',
   PRIMARY KEY (`id`),
   KEY `requirements_project_id_foreign` (`project_id`),
   KEY `requirements_current_version_id_foreign` (`current_version_id`),
@@ -243,36 +230,31 @@ CREATE TABLE IF NOT EXISTS `requirements` (
   CONSTRAINT `requirements_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.requirements: ~0 rows (約) のデータをダンプしています
 
---  テーブル specification_manager.roles の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `roles` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `guard_name` varchar(255) NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `guard_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.roles: ~3 rows (約) のデータをダンプしています
 INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
 	(1, 'admin', 'web', '2025-09-04 04:11:42', '2025-09-04 04:11:42'),
 	(2, 'manager', 'web', '2025-09-04 04:11:42', '2025-09-04 04:11:42'),
 	(3, 'tester', 'web', '2025-09-04 04:11:42', '2025-09-04 04:11:42');
 
---  テーブル specification_manager.role_has_permissions の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `role_has_permissions` (
-  `permission_id` bigint(20) unsigned NOT NULL,
-  `role_id` bigint(20) unsigned NOT NULL,
+  `permission_id` bigint unsigned NOT NULL,
+  `role_id` bigint unsigned NOT NULL,
   PRIMARY KEY (`permission_id`,`role_id`),
   KEY `role_has_permissions_role_id_foreign` (`role_id`),
   CONSTRAINT `role_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
   CONSTRAINT `role_has_permissions_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.role_has_permissions: ~10 rows (約) のデータをダンプしています
 INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(1, 1),
 	(1, 2),
@@ -285,31 +267,29 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(5, 1),
 	(5, 3);
 
---  テーブル specification_manager.sessions の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `sessions` (
-  `id` varchar(255) NOT NULL,
-  `user_id` bigint(20) unsigned DEFAULT NULL,
-  `ip_address` varchar(45) DEFAULT NULL,
-  `user_agent` text DEFAULT NULL,
-  `payload` longtext NOT NULL,
-  `last_activity` int(11) NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `user_id` bigint unsigned DEFAULT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_general_ci,
+  `payload` longtext COLLATE utf8mb4_general_ci NOT NULL,
+  `last_activity` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `sessions_user_id_index` (`user_id`),
   KEY `sessions_last_activity_index` (`last_activity`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.sessions: ~4 rows (約) のデータをダンプしています
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+	('2xLX9ZlYumWMk7I7YmErdCCPzR7BZJRB69eXonnX', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiZ3BIY2N6UTVUUWE4bUlKVEdGa2NIV2FGYkVzMWNscmhnNjFpY2Y3eSI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjcwOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvcHJvamVjdHMvMi9idWxsZXQtY2FzZXM/aGlkZV9kb25lPTEmcHJpb3JpdHk9JnE9Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mjt9', 1757260537),
 	('s2XxY1VPtS9EUckUP7kPNTsEqXb9PfaPoG6O3Uww', 2, '192.168.1.2', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoicEdKakl4TDZzS3FQZGRhTERHSjNtQU5FbU5JdVNVekRnUmJvcWhkSSI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjUyOiJodHRwOi8vMTkyLjE2OC4xLjIyOTo4MDAxL3NwZWNpZmljYXRpb25zLzM/cHJvamVjdD0xIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MjtzOjE3OiJwYXNzd29yZF9oYXNoX3dlYiI7czo2MDoiJDJ5JDEyJExDN1ZodHQ2OUE4YldWRmpTNXhMZWVuakNwOVo0Qks5SjBXLmVoLnR4MWliZGdZc016ZWI2Ijt9', 1757139839);
 
---  テーブル specification_manager.specifications の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `specifications` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` bigint(20) unsigned NOT NULL,
-  `code` varchar(64) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `status` varchar(32) NOT NULL DEFAULT 'draft',
-  `current_version_id` bigint(20) unsigned DEFAULT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` bigint unsigned NOT NULL,
+  `code` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `status` varchar(32) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'draft',
+  `current_version_id` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -319,31 +299,29 @@ CREATE TABLE IF NOT EXISTS `specifications` (
   CONSTRAINT `specifications_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.specifications: ~3 rows (約) のデータをダンプしています
 INSERT INTO `specifications` (`id`, `project_id`, `code`, `title`, `status`, `current_version_id`, `created_at`, `updated_at`) VALUES
 	(1, 2, 'MainForm.SummarizeTable.cs', '土壌分析値について', 'approved', 1, '2025-09-04 22:41:43', '2025-09-04 22:41:43'),
 	(2, 2, 'order_numとactive_flg', '表示フラグと表示順の値', 'approved', 2, '2025-09-04 23:28:03', '2025-09-04 23:28:03'),
 	(3, 1, '.env', '使用している開発環境', 'approved', 9, '2025-09-05 00:51:06', '2025-09-05 21:23:59');
 
---  テーブル specification_manager.specification_versions の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `specification_versions` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `specification_id` bigint(20) unsigned NOT NULL,
-  `version_no` int(10) unsigned NOT NULL,
-  `body_md` longtext DEFAULT NULL,
-  `body_path_flg` enum('md','html') DEFAULT 'md',
-  `attributes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`attributes`)),
-  `created_by` bigint(20) unsigned DEFAULT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `specification_id` bigint unsigned NOT NULL,
+  `version_no` int unsigned NOT NULL,
+  `body_md` longtext COLLATE utf8mb4_general_ci,
+  `body_path_flg` enum('md','html') COLLATE utf8mb4_general_ci DEFAULT 'md',
+  `attributes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  `created_by` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `specification_versions_specification_id_version_no_unique` (`specification_id`,`version_no`),
   KEY `specification_versions_created_by_foreign` (`created_by`),
   CONSTRAINT `specification_versions_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `specification_versions_specification_id_foreign` FOREIGN KEY (`specification_id`) REFERENCES `specifications` (`id`) ON DELETE CASCADE
+  CONSTRAINT `specification_versions_specification_id_foreign` FOREIGN KEY (`specification_id`) REFERENCES `specifications` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `specification_versions_chk_1` CHECK (json_valid(`attributes`))
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.specification_versions: ~6 rows (約) のデータをダンプしています
 INSERT INTO `specification_versions` (`id`, `specification_id`, `version_no`, `body_md`, `body_path_flg`, `attributes`, `created_by`, `created_at`, `updated_at`) VALUES
 	(1, 1, 1, '# 土壌分析値（青いセルの値）の保存タイミング\r\n- 再計算の実行\r\n- MainFormを閉じるタイミング\r\n\r\n## 保存前に確認ダイアログ\r\n- DBに保存前に毎回確認する', 'md', '[]', 2, '2025-09-04 22:41:43', '2025-09-04 22:41:43'),
 	(2, 2, 1, '似ている単語だから注意\n\n![rain](/storage/spec-images/2025/09/R9EMtj5dweoKVu5nQen3YTOAaepEPcrOnGYmPXNo.png)\n', 'md', '[]', 2, '2025-09-04 23:28:03', '2025-09-04 23:28:03'),
@@ -355,18 +333,17 @@ INSERT INTO `specification_versions` (`id`, `specification_id`, `version_no`, `b
 	(8, 3, 6, '- Whisper API\r\n- Gemini', 'md', '[]', 2, '2025-09-05 21:19:38', '2025-09-05 21:19:38'),
 	(9, 3, 7, '- Whisper API\r\n- Gemini', 'md', '[]', 2, '2025-09-05 21:23:56', '2025-09-05 21:23:56');
 
---  テーブル specification_manager.spec_change_requests の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `spec_change_requests` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` bigint(20) unsigned NOT NULL,
-  `specification_id` bigint(20) unsigned NOT NULL,
-  `from_version_id` bigint(20) unsigned DEFAULT NULL,
-  `to_version_id` bigint(20) unsigned DEFAULT NULL,
-  `reason` varchar(255) NOT NULL,
-  `impact` text DEFAULT NULL,
-  `status` varchar(32) NOT NULL DEFAULT 'proposed',
-  `requested_by` bigint(20) unsigned DEFAULT NULL,
-  `approved_by` bigint(20) unsigned DEFAULT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` bigint unsigned NOT NULL,
+  `specification_id` bigint unsigned NOT NULL,
+  `from_version_id` bigint unsigned DEFAULT NULL,
+  `to_version_id` bigint unsigned DEFAULT NULL,
+  `reason` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `impact` text COLLATE utf8mb4_general_ci,
+  `status` varchar(32) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'proposed',
+  `requested_by` bigint unsigned DEFAULT NULL,
+  `approved_by` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -384,7 +361,6 @@ CREATE TABLE IF NOT EXISTS `spec_change_requests` (
   CONSTRAINT `spec_change_requests_to_version_id_foreign` FOREIGN KEY (`to_version_id`) REFERENCES `specification_versions` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.spec_change_requests: ~3 rows (約) のデータをダンプしています
 INSERT INTO `spec_change_requests` (`id`, `project_id`, `specification_id`, `from_version_id`, `to_version_id`, `reason`, `impact`, `status`, `requested_by`, `approved_by`, `created_at`, `updated_at`) VALUES
 	(1, 1, 3, 3, 4, 'テストのため', '画像を', 'proposed', 2, NULL, '2025-09-05 01:10:04', '2025-09-05 01:10:04'),
 	(2, 1, 3, 3, 5, '画像削除', NULL, 'proposed', 2, NULL, '2025-09-05 20:32:44', '2025-09-05 20:32:44'),
@@ -393,13 +369,12 @@ INSERT INTO `spec_change_requests` (`id`, `project_id`, `specification_id`, `fro
 	(5, 1, 3, 3, 8, '画像のリンク削除', NULL, 'proposed', 2, NULL, '2025-09-05 21:19:38', '2025-09-05 21:19:38'),
 	(6, 1, 3, 3, 9, '画像のリンク削除', NULL, 'approved', 2, 2, '2025-09-05 21:23:56', '2025-09-05 21:23:59');
 
---  テーブル specification_manager.spec_versions の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `spec_versions` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `requirement_id` bigint(20) unsigned NOT NULL,
-  `version_no` int(10) unsigned NOT NULL,
-  `body_md` longtext NOT NULL,
-  `created_by` bigint(20) unsigned DEFAULT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `requirement_id` bigint unsigned NOT NULL,
+  `version_no` int unsigned NOT NULL,
+  `body_md` longtext COLLATE utf8mb4_general_ci NOT NULL,
+  `created_by` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -410,17 +385,15 @@ CREATE TABLE IF NOT EXISTS `spec_versions` (
   CONSTRAINT `spec_versions_requirement_id_foreign` FOREIGN KEY (`requirement_id`) REFERENCES `requirements` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.spec_versions: ~0 rows (約) のデータをダンプしています
 
---  テーブル specification_manager.test_cases の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `test_cases` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` bigint(20) unsigned NOT NULL,
-  `requirement_id` bigint(20) unsigned DEFAULT NULL,
-  `title` varchar(255) NOT NULL,
-  `preconditions` text DEFAULT NULL,
-  `expected_result` text DEFAULT NULL,
-  `created_by` bigint(20) unsigned NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` bigint unsigned NOT NULL,
+  `requirement_id` bigint unsigned DEFAULT NULL,
+  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `preconditions` text COLLATE utf8mb4_general_ci,
+  `expected_result` text COLLATE utf8mb4_general_ci,
+  `created_by` bigint unsigned NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -432,14 +405,12 @@ CREATE TABLE IF NOT EXISTS `test_cases` (
   CONSTRAINT `test_cases_requirement_id_foreign` FOREIGN KEY (`requirement_id`) REFERENCES `requirements` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.test_cases: ~0 rows (約) のデータをダンプしています
 
---  テーブル specification_manager.test_results の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `test_results` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `test_case_id` bigint(20) unsigned NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `test_case_id` bigint unsigned NOT NULL,
   `passed` tinyint(1) NOT NULL,
-  `notes` text DEFAULT NULL,
+  `notes` text COLLATE utf8mb4_general_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -447,38 +418,33 @@ CREATE TABLE IF NOT EXISTS `test_results` (
   CONSTRAINT `test_results_test_case_id_foreign` FOREIGN KEY (`test_case_id`) REFERENCES `test_cases` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.test_results: ~0 rows (約) のデータをダンプしています
 
---  テーブル specification_manager.test_steps の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `test_steps` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.test_steps: ~0 rows (約) のデータをダンプしています
 
---  テーブル specification_manager.users の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `login_code` varchar(255) DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `login_code` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
-  `is_admin` tinyint(1) NOT NULL DEFAULT 0,
+  `remember_token` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
   `entry_date` date DEFAULT NULL,
   `exit_date` date DEFAULT NULL,
-  `note` text DEFAULT NULL,
+  `note` text COLLATE utf8mb4_general_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `login_code` (`login_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- テーブル specification_manager.users: ~1 rows (約) のデータをダンプしています
 INSERT INTO `users` (`id`, `name`, `login_code`, `password`, `email`, `email_verified_at`, `remember_token`, `is_admin`, `entry_date`, `exit_date`, `note`, `created_at`, `updated_at`) VALUES
 	(2, 'Admin', 'hanako', '$2y$12$LC7Vhtt69A8bWVFjS5xLeenjCp9Z4BK9J0W.eh.tx1ibdgYsMzeb6', 'admin@example.com', '2025-09-04 04:12:56', NULL, 1, NULL, NULL, '初期管理者アカウント', '2025-09-04 04:12:56', '2025-09-04 04:12:56');
 
